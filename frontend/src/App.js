@@ -12,23 +12,27 @@ import Header from './components/header/Header.js';
 function App() {
   return (<>
     <Header />
+    
     <main>
 
       <Tab.Container defaultActiveKey="modules">
+
         <Nav justify variant="pills">
+
           <Nav.Item>
             <Nav.Link eventKey="modules">Modules</Nav.Link>
           </Nav.Item>
+
           <Nav.Item>
             <Nav.Link eventKey="stats">Stats</Nav.Link>
           </Nav.Item>
+
         </Nav>
 
         <hr />
 
-        
-
         <Tab.Content>
+
           <Tab.Pane eventKey="modules">
             <ModuleHandler />
           </Tab.Pane>
@@ -36,6 +40,7 @@ function App() {
           <Tab.Pane eventKey="stats">
             stats here
           </Tab.Pane>
+
         </Tab.Content>
 
       </Tab.Container>
