@@ -4,6 +4,7 @@ import './Header.css';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 class Header extends React.Component {
     constructor(props) {
@@ -12,7 +13,7 @@ class Header extends React.Component {
         this.menuOpen = false;
     }
 
-    expandMenu = () => {
+    toggleHeaderMenu = () => {
 
         if (this.menuOpen) {
             document.getElementById("header").style.height = "100px";
@@ -26,6 +27,11 @@ class Header extends React.Component {
 
     }
 
+    selectMenuItem = (event) => {
+        this.toggleHeaderMenu();
+        this.props.setView(event.target.getAttribute("data-key"));
+    }
+
     render() {
         return (
             <div id="header">
@@ -33,18 +39,19 @@ class Header extends React.Component {
                     <div id="header-logo">
                         <h1>StaySane</h1>
                     </div>
-                    <div id="header-menu-icon" onClick={this.expandMenu}>
-                    <svg class="bi bi-list" width="40px" height="40px" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z" clip-rule="evenodd"/>
+                    <div id="header-menu-icon" onClick={this.toggleHeaderMenu}>
+                    <svg className="bi bi-list" width="40px" height="40px" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" d="M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z" clipRule="evenodd"/>
                     </svg>
                     </div>
                 </Row>
                 <Row id="header-menu-hidden">
-                    <ul>
-                        <li>About me</li>
-                        <li>Example menu</li>
-                        <li>Lorem ipsum</li>
-                    </ul>
+                    <ListGroup id="header-menu-listgroup" variant="flush">
+                        <ListGroup.Item data-key="modules" onClick={this.selectMenuItem} className="header-menu-item">Modules</ListGroup.Item>
+                        <ListGroup.Item data-key="stats" onClick={this.selectMenuItem} className="header-menu-item">Stats</ListGroup.Item>
+                        <ListGroup.Item data-key="undefined" onClick={this.selectMenuItem} className="header-menu-item">Reserved</ListGroup.Item>
+                        <ListGroup.Item data-key="undefined" onClick={this.selectMenuItem} className="header-menu-item">Reserved</ListGroup.Item>
+                    </ListGroup>
                 </Row>
             </div>
         );
