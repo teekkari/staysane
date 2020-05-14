@@ -43,12 +43,12 @@ class BasicModule extends React.Component {
         if (this.state.status === 'complete') {
             return (
             <div className="module-complete">
-                <Alert className="animate-in" variant="success">Complete</Alert>
+                <Alert className="animate-in" variant="success">Complete!</Alert>
             </div>);
         } else {
             return (
                 <div className="module-complete">
-                    <Button onClick={this.complete} variant="primary" block>Done!</Button>
+                    <Button onClick={this.complete} variant="outline-primary" block>Done!</Button>
                 </div>);
         }
     }

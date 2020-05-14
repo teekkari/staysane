@@ -32,6 +32,7 @@
 .module-complete > * {
     height: 50px;
     margin: 0px;
+    text-align: center;
 }
 
 .animate-out {
