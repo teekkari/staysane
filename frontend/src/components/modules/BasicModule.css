@@ -1,0 +1,77 @@
+.fake-module {
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+    border: 2px dashed #aaa;
+    margin: 10px 0px;
+    border-radius: 10px;
+}
+
+.module {
+    display: block;
+    padding: 20px;
+    margin: 15px 10px;
+    background-color: lightblue;
+    border-radius: 10px;
+}
+
+.module-title {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.module-complete {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 50px;
+}
+
+.module-complete > * {
+    height: 50px;
+    margin: 0px;
+}
+
+.animate-out {
+    animation-duration: 0.2s;
+    animation-name: animate-out;
+    animation-fill-mode: forwards;
+}
+
+.animate-in {
+    animation-duration: 0.15s;
+    animation-name: animate-in;
+}
+
+@keyframes animate-out {
+    from {
+        transform: scale(1.0);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0);
+        display: none;
+    }
+}
+
+@keyframes animate-in {
+    from {
+        transfrom: scale(0.0);
+    }
+
+    60% {
+        transform: scale(1.2);
+    }
+
+    80% {
+        transform: scale(0.8);
+    }
+
+    to {
+        transform: scale(1.0);
+    }
+}
+
