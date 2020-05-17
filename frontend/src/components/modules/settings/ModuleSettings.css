@@ -1,0 +1,41 @@
+
+.settings-module-list:first-child {
+    background-color: red;
+    border-top: 2px solid #aaaaaa55;
+}
+
+.settings-edit-module-wrapper {
+    border-bottom: 2px solid #aaaaaa55;
+}
+
+.settings-module {
+    color: #666;
+    padding: 10px;
+
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.settings-module-title {
+    width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.settings-module-actions {
+    color: #666;
+}
+
+.settings-module-fields {
+
+}
+
+
+#settings-add-module {
+    color: #555;
+}

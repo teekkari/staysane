@@ -3,6 +3,7 @@ import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
+import ModuleSettings from './settings/ModuleSettings.js';
 import BasicModule from './BasicModule.js';
 import './BasicModule.css';
 
@@ -35,10 +36,10 @@ const DefaultModules = {
 class ModuleHandler extends React.Component {
 
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
-            showNewModuleModal: false,
+            showNewModuleModal: true,
             modules: [
                 DefaultModules.testmodule,
                 DefaultModules.sleep,
@@ -46,7 +47,12 @@ class ModuleHandler extends React.Component {
                 DefaultModules.comfortzone,
             ]
         }
+    }
 
+    setModules = (modules) => {
+        this.setState({
+            modules: modules
+        });
     }
 
     addNewModule = () => {
@@ -62,11 +68,14 @@ class ModuleHandler extends React.Component {
     renderAddNewModule = () => {
         return(
             <div id="add-module" className="fake-module" onClick={this.addNewModule}>
-                <svg className="bi bi-plus-circle" width="70px" height="70px" viewBox="0 0 16 16" fill="#aaa" xmlns="http://www.w3.org/2000/svg">
-                    <path fillRule="evenodd" d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z" clipRule="evenodd"/>
-                    <path fillRule="evenodd" d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z" clipRule="evenodd"/>
-                    <path fillRule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clipRule="evenodd"/>
-                </svg>
+                <div>
+                    <svg style={{ display: 'block', margin: 'auto'}} className="bi bi-plus-circle" width="70px" height="70px" viewBox="0 0 16 16" fill="#aaa" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" d="M8 3.5a.5.5 0 01.5.5v4a.5.5 0 01-.5.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z" clipRule="evenodd"/>
+                        <path fillRule="evenodd" d="M7.5 8a.5.5 0 01.5-.5h4a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8z" clipRule="evenodd"/>
+                        <path fillRule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0 1A8 8 0 108 0a8 8 0 000 16z" clipRule="evenodd"/>
+                    </svg>
+                    <div style={{textAlign: 'center'}}>Manage cards</div>
+                </div>
             </div>
         );
     }
@@ -77,10 +86,10 @@ class ModuleHandler extends React.Component {
         return(
             <Modal show={this.state.showNewModuleModal} onHide={ () => { this.setState({ showNewModuleModal: false }); }}>
                 <Modal.Header closeButton>
-                    <Modal.Title>New health module!</Modal.Title>
+                    <Modal.Title>Manage cards</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    Options for new modals go here.
+                    <ModuleSettings modules={this.state.modules} setModules={this.setModules} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={ () => { this.setState({ showNewModuleModal: false })}}>
