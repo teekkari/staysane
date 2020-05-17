@@ -46,6 +46,8 @@
 }
 
 #header-menu-listgroup {
+    opacity: 0;
+    transition: opacity 0.5s;
     width: 100%;
     font-size: 1.5rem;
 

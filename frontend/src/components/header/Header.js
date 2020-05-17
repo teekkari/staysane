@@ -18,9 +18,11 @@ class Header extends React.Component {
         if (this.menuOpen) {
             document.getElementById("header").style.height = "100px";
             document.getElementById("header-menu-icon").style.transform = "rotate(0deg)";
+            document.getElementById("header-menu-listgroup").style.opacity = "0";
         } else {
             document.getElementById("header").style.height = "100vh";
             document.getElementById("header-menu-icon").style.transform = "rotate(90deg)";
+            document.getElementById("header-menu-listgroup").style.opacity = "100";
         }
 
         this.menuOpen = !this.menuOpen;
