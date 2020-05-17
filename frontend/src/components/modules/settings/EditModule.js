@@ -49,7 +49,7 @@ class EditModule extends React.Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Text>Text</InputGroup.Text>
                             </InputGroup.Prepend>
-                            <FormControl as="textarea" aria-label="Text" value={this.props.module.body} />
+                            <FormControl as="textarea" aria-label="Text" value={this.props.module.props.body} />
                         </InputGroup>
                         <Button className="mb-3" block size="sm" variant="outline-danger">Delete</Button>
                     </div>
