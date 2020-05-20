@@ -4,19 +4,20 @@ const db = require('./db/dbHandler.js');
 // file is loaded after mongo is connected so this works
 let moduleCollection = new db.dbCollection("modules");
 
-// TODO: log information about requests to console
+// Data validation is done in dbHandler not here.
+// (well, its not implemented yet but..)
 
 const moduleCallbacks = {
     get: (req, res) => {
-
-        // TODO: get find params from req if 'id' not defined
 
         if (req.params.id) {
             moduleCollection.get({ _id: new ObjectID(req.params.id) }).then( (data) => {
                 res.send(data);
             })
         } else {
-            moduleCollection.get({}).then( (data) => {
+            const find = req.query;
+
+            moduleCollection.get({ find }).then( (data) => {
                 res.send(data);
             });
         }
