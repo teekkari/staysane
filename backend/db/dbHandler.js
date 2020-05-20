@@ -63,9 +63,13 @@ class dbCollection {
      *  createIfNotExists : boolean
      *
      *  returns num of updated rows
+     * 
+     *  TODO: check if document is found
+     * 
      */
     update = (find, data, createIfNotExists) => {
 
+        return this.collection.updateOne( find, { $set: data }, { upsert: createIfNotExists });
     }
 
 

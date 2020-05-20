@@ -17,7 +17,7 @@ const moduleCallbacks = {
         } else {
             const find = req.query;
 
-            moduleCollection.get({ find }).then( (data) => {
+            moduleCollection.get( find ).then( (data) => {
                 res.send(data);
             });
         }
@@ -31,9 +31,17 @@ const moduleCallbacks = {
     },
 
     put: (req, res) => {
-        const find = { _id: req.params.id }
-        const data = null;
-        moduleCollection.update(find, data, null);
+
+        if (req.params.id == undefined) {
+            res.sendStatus(400);
+            return;
+        }
+
+        const find = { _id: new ObjectID(req.params.id) };
+        const data = req.body;
+        moduleCollection.update(find, data, false).then ( (response) => {
+            res.send("updated");
+        });
     },
 
 
