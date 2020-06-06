@@ -1,9 +1,14 @@
 const mongodb = require('mongodb').MongoClient;
 const assert = require('assert').strict;
 const express = require('express');
+const cors = require('cors');
 const dbHandler = require('./db/dbHandler');
 
 const app = express();
+
+// TODO: configure CORS options
+const corsOptions = {};
+app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded());
@@ -31,10 +36,6 @@ const dbUrl = 'mongodb://localhost:27017';
             id
             title
             body
-
-
-
-
 
 */
 
