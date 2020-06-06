@@ -1,7 +1,10 @@
 const API = {
-    baseUrl: "localhost:5000"
-}
+    baseUrl: "http://localhost:5000",
 
-module.exports = {
-    API: API
-}
+    authentication: "/users",
+
+    modules: "/modules",
+};
+
+export default API;
+export { API };
