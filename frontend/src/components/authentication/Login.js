@@ -14,14 +14,60 @@ class Login extends React.Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            email: "",
+            password: "",
+        }
+
+
     }
 
+    formChangeHandler = (event) => {
+        this.setState({
+            [event.target.attributes.id.value]: event.target.value   
+        });
+    }
+
+    // submits a POST request to authentication API
     submitLogin = (event) => {
         event.preventDefault();
-        event.target.disabled = true;
+
+        const loginButton = event.target;
+        loginButton.disabled = true;
+
+        const data = {
+            email: this.state.email,
+            password: this.state.password
+        }
+
+        axios.post(API.baseUrl + API.authentication, data)
+            .then( (response) => {
+                console.log(response);
+                this.props.setAuthentication(true);
+            })
+            .catch( (error) => {
+                console.log(error);
+                loginButton.disabled = false;
+            });
+    }
+
+    register = (event) => {
+        event.preventDefault();
 
 
+        const data = {
+            email: this.state.email,
+            password: this.state.password
+        }
 
+        axios.put(API.baseUrl + API.authentication, data)
+            .then( (response) => {
+                console.log(response);
+            })
+            .catch( (error) => {
+                console.log(error);
+            });
     }
 
     render() {
@@ -29,18 +75,22 @@ class Login extends React.Component {
             <div id="login-wrapper">
                 <h1>Login</h1>
                 <Form>
-                    <Form.Group controlId="userEmail">
+                    <Form.Group controlId="email">
                         <Form.Label>Username</Form.Label>
-                        <Form.Control type="email" placeholder="your.email@example.com" />
+                        <Form.Control type="email" placeholder="your.email@example.com" onChange={this.formChangeHandler}/>
                     </Form.Group>
 
-                    <Form.Group>
+                    <Form.Group controlId="password">
                         <Form.Label>Password</Form.Label>
-                        <Form.Control type="password" placeholder="your-secure-password-here" />
+                        <Form.Control type="password" placeholder="your-SeCure-p4ssw0rd-here" onChange={this.formChangeHandler} />
                     </Form.Group>
 
                     <Button variant="primary" type="submit" block onClick={this.submitLogin}>
                         Login
+                    </Button>
+
+                    <Button variant="outline-secondary" block onClick={this.register}>
+                        Sign up
                     </Button>
                 </Form>
             </div>
