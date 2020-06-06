@@ -76,8 +76,7 @@ const userCallbacks = {
 
         userCollection.get(userInformation, true).then( (response) => {
 
-            // empty array => no user with creds found
-            if (response.length === null) {
+            if (response === null) {
                 res.sendStatus(400);
             } else {
                 // create session key to authenticate user login session
@@ -86,7 +85,7 @@ const userCallbacks = {
 
                 // add the sessionKey to user data in db with upsert option true
                 userCollection.update({ _id: userID }, { sessionKey: key }, true).then( (response) => {
-                    res.send({ key: key});
+                    res.send({ key: key });
                 });
                 
             }
@@ -95,7 +94,20 @@ const userCallbacks = {
 
     // signup
     put: (req, res) => {
-        res.send("OK");
+        const userInformation = req.body;
+
+        console.log(userInformation);
+
+        userCollection.get({ email: userInformation.email }, true).then( (response) => {
+            if (response === null) {
+                userCollection.insert( userInformation ).then( (response) => {
+                    console.log(response);
+                    res.status(200).send("User account created.");
+                });
+            } else {
+                res.status(400).send("Email already exists");
+            }
+        });
     },
 }
 
