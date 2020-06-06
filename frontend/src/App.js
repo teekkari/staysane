@@ -26,10 +26,10 @@ function App() {
   const [activeView, setView] = useState("modules");
 
 
-  let userAuthenticated = false;
+  const [userAuthenticated, setAuthentication] = useState(false);
 
   if (!userAuthenticated) {
-    return (<Login />);
+    return (<Login setAuthentication={setAuthentication} />);
   }
 
 
@@ -54,6 +54,7 @@ function App() {
         </Tab.Content>
 
       </Tab.Container>
+
     </main>
   </>);
 }
