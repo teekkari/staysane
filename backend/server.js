@@ -20,19 +20,18 @@ const dbUrl = 'mongodb://localhost:27017';
 
     DB structure idea:
         Users
-            what modules user has
+            what modules user has (array of ids)
             user id
             user email
             user password (salted hashed)
+            user key (stored in client cookies and used for authorization)
+            user key expiration
 
-        BasicModules
-            preset modules.. idea is to reuse them
+        Modules
+            id
+            title
+            body
 
-        CustomModules
-            modules the users have wanted to customize (title, body etc)
-
-        AdvancedModules (concept..)
-            modules with more advanced content (nothing concrete yet, just an idea)
 
 
 
@@ -63,6 +62,22 @@ mongodb.connect(dbUrl, (err, _db) => {
         .post(modules.post)
         .put(modules.put)
         .delete(modules.delete);
+
+
+    /* 
+    * MODULES ("Cards")
+    *
+    * GET       /users/[key]                get user information
+    * POST      /users/                     login
+    * PUT       /users/                     signup
+    */  
+
+    const users = require('./endpointCallbacks.js').users;
+
+    app.route("/users/:key?")
+        .get(users.get)
+        .post(users.post)
+        .put(users.put)
 
 
     app.listen(port, () => console.log(`Listening on port ${port}`) );

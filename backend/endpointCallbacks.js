@@ -3,6 +3,7 @@ const db = require('./db/dbHandler.js');
 
 // file is loaded after mongo is connected so this works
 let moduleCollection = new db.dbCollection("modules");
+let userCollection = new db.dbCollection("users");
 
 // Data validation is done in dbHandler not here.
 // (well, its not implemented yet but..)
@@ -59,6 +60,26 @@ const moduleCallbacks = {
 }
 
 
+const userCallbacks = {
+
+    // get user data
+    get: (req, res) => {
+        
+    },
+
+    // login
+    post: (req, res) => {
+
+    },
+
+    // signup
+    put: (req, res) => {
+
+    },
+}
+
+
 module.exports = {
-    modules: moduleCallbacks
+    modules: moduleCallbacks,
+    users: userCallbacks
 }
