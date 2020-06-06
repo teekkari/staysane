@@ -8,6 +8,7 @@ import Tab from 'react-bootstrap/Tab';
 
 import ModuleHandler from './components/modules/ModuleHandler.js';
 import Header from './components/header/Header.js';
+import Login from './components/authentication/Login.js';
 
 
 /*
@@ -23,6 +24,15 @@ function App() {
 
   // activeView is used to manage tab keys, defaults to "modules"
   const [activeView, setView] = useState("modules");
+
+
+  let userAuthenticated = false;
+
+  if (!userAuthenticated) {
+    return (<Login />);
+  }
+
+
 
   return (<>
     <Header setView={setView} />

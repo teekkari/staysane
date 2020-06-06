@@ -1,0 +1,19 @@
+#login-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+
+    font-size: 1.3rem;
+
+    color: #333;
+}
+
+#login-wrapper > h1 {
+    margin-bottom: 50px;
+}
+
+#login-wrapper form {
+    width: 80%;
+}
