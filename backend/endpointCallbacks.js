@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const ObjectID = require('mongodb').ObjectID;
 const db = require('./db/dbHandler.js');
 
@@ -64,17 +65,37 @@ const userCallbacks = {
 
     // get user data
     get: (req, res) => {
-        
+        res.send("OK");
     },
 
     // login
     post: (req, res) => {
 
+        // object with email and password fields
+        const userInformation = req.body;
+
+        userCollection.get(userInformation, true).then( (response) => {
+
+            // empty array => no user with creds found
+            if (response.length === null) {
+                res.sendStatus(400);
+            } else {
+                // create session key to authenticate user login session
+                const key = crypto.randomBytes(24).toString('hex');
+                const userID = response._id
+
+                // add the sessionKey to user data in db with upsert option true
+                userCollection.update({ _id: userID }, { sessionKey: key }, true).then( (response) => {
+                    res.send({ key: key});
+                });
+                
+            }
+        });
     },
 
     // signup
     put: (req, res) => {
-
+        res.send("OK");
     },
 }
 
