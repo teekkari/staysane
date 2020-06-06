@@ -30,10 +30,16 @@ class dbCollection {
 
     /*
      *  find : JSON
+     *  single : boolean
      *
      *  returns found rows
      */
-    get = (find) => {
+    get = (find, single) => {
+
+        if (single) {
+            return this.collection.findOne(find);
+        }
+
         return this.collection.find(find).toArray();
     }
 
