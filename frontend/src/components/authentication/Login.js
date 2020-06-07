@@ -86,7 +86,7 @@ class Login extends React.Component {
                 <h1>Login</h1>
                 <Form>
                     <Form.Group controlId="email">
-                        <Form.Label>Username</Form.Label>
+                        <Form.Label>Email</Form.Label>
                         <Form.Control type="email" placeholder="your.email@example.com" onChange={this.formChangeHandler}/>
                     </Form.Group>
 
