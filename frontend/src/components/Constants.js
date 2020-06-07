@@ -1,5 +1,7 @@
+console.log(window.location.hostname);
+
 const API = {
-    baseUrl: "http://localhost:5000",
+    baseUrl: "http://" + window.location.hostname + ":5000",
 
     authentication: "/users",
 
