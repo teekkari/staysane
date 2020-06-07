@@ -5,6 +5,8 @@ import Cookies from 'universal-cookie';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
+import Signup from './Signup.js';
+
 
 import API from '../Constants.js';
 
@@ -21,6 +23,14 @@ class Login extends React.Component {
         this.state = {
             email: "",
             password: "",
+            showSignup: false,
+        }
+
+        // check if user is already authenticated
+        // we dont care about the actual key here, it will be checked upon further requests
+        const sessionKey = cookies.get('sessionKey');
+        if (sessionKey !== undefined) {
+            this.props.setAuthentication(true);
         }
     }
 
@@ -44,7 +54,6 @@ class Login extends React.Component {
 
         axios.post(API.baseUrl + API.authentication, data)
             .then( (response) => {
-  
                 // store session key in a cookie and mark session as authenticated
                 cookies.set('sessionKey', response.data.key, { maxAge: 60*60*24*14, sameSite: true });
                 this.props.setAuthentication(true);
@@ -55,25 +64,23 @@ class Login extends React.Component {
             });
     }
 
+    showSignupForm = (bool) => {
+        this.setState({ showSignup: bool });
+    }
+
     register = (event) => {
         event.preventDefault();
-
-
-        const data = {
-            email: this.state.email,
-            password: this.state.password
-        }
-
-        axios.put(API.baseUrl + API.authentication, data)
-            .then( (response) => {
-                console.log(response);
-            })
-            .catch( (error) => {
-                console.log(error);
-            });
+        this.showSignupForm(true);
     }
 
     render() {
+
+        if (this.state.showSignup) {
+            return <Signup showSignupForm={this.showSignupForm} />;
+        }
+
+
+
         return (
             <div id="login-wrapper">
                 <h1>Login</h1>
