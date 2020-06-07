@@ -43,7 +43,8 @@ class Signup extends React.Component {
 
         const data = {
             email: this.state.email,
-            password: this.state.password
+            password: this.state.password,
+            repeatPassword: this.state.repeatPassword
         }
 
         axios.put(API.baseUrl + API.authentication, data)
@@ -98,9 +99,10 @@ class Signup extends React.Component {
                     <Form.Group controlId="password">
                         <Form.Label>Password</Form.Label>
                         <Form.Control type="password" placeholder="your-SeCure-p4ssw0rd-here" onChange={this.formChangeHandler} />
+                        <Form.Text className="text-muted">Your password must be at least 8 characters long.</Form.Text>
                     </Form.Group>
 
-                    <Form.Group controlId="repeat-password" className="hidden">
+                    <Form.Group controlId="repeatPassword">
                         <Form.Label>Repeat the password</Form.Label>
                         <Form.Control type="password" placeholder="repeat your password" onChange={this.formChangeHandler} />
                     </Form.Group>
