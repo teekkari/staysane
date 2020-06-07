@@ -1,17 +1,21 @@
 const db = require('./db/dbHandler.js');
-const usersCollection = db.dbCollection('users');
+const usersCollection = new db.dbCollection('users');
 
-// re
-function authorizeUser(sessionKey, resourceID) {
+// @param sessionKey string hex session key
+// @param resourceIDS string or array of resourceIDs
+function authorizeUser(sessionKey, resourceIDs) {
+
+    // this allows for single values to be passed in as parameters
+    const resources = [ resourceIDs ].flat();
 
     usersCollection.get({
         sessionKey: sessionKey,
-        resources: { $elemMatch: resourceID },
+        resources: { $all: resourceIDs },
     }, true).then( (response) => {
         if (response !== null) {
             return true;
         } else {
-            return false;
+            throw new Error("Authorization failed");
         }
     });
 
