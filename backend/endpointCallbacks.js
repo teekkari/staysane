@@ -78,16 +78,33 @@ const userCallbacks = {
     },
 
     // login
+    // if login fails we send HTTP 400 'bad_credentials'
     post: (req, res) => {
 
         // object with email and password fields
         const userInformation = req.body;
 
-        userCollection.get(userInformation, true).then( (response) => {
+        userCollection.get({ email: userInformation.email }, true).then( (response) => {
 
             if (response === null) {
-                res.sendStatus(400);
+                res.status(400).send("bad_credentials");
             } else {
+
+                console.log(response);
+
+                const salt = response.salt;
+                const iterations = response.passwordIterations;
+                const passwordAttempt = userInformation.password;
+
+                const hashAttempt = crypto.pbkdf2Sync(passwordAttempt, salt, iterations, 64, 'sha512').toString('hex');
+
+                // password doesn't match the hash
+                if ( hashAttempt !== response.passwordHash ) {
+                    res.status(400).send("bad_credentials");
+                    return;
+                }
+
+
                 // create session key to authenticate user login session
                 const key = crypto.randomBytes(24).toString('hex');
                 const userID = response._id;
@@ -138,9 +155,20 @@ const userCallbacks = {
                     return;
                 }
 
+                const salt = crypto.randomBytes(32).toString('hex');
+                const iterations = 1000;
+                const hash = crypto.pbkdf2Sync(userInformation.password, salt, iterations, 64, 'sha512').toString('hex');
+
+                const user = {
+                    email: userInformation.email,
+                    passwordHash: hash,
+                    salt: salt,
+                    passwordIterations: iterations
+                }
+
                 // all checks OK -> insert user to db
-                userCollection.insert( userInformation ).then( (response) => {
-                    console.log(response);
+                userCollection.insert( user ).then( (response) => {
+                    //console.log(response);
                     res.status(200).send("user_created");
                 });
             } else {
