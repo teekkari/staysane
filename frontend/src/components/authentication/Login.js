@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -10,6 +11,8 @@ import API from '../Constants.js';
 
 import './Login.css';
 
+const cookies = new Cookies();
+
 class Login extends React.Component {
 
     constructor(props) {
@@ -19,8 +22,6 @@ class Login extends React.Component {
             email: "",
             password: "",
         }
-
-
     }
 
     formChangeHandler = (event) => {
@@ -43,7 +44,9 @@ class Login extends React.Component {
 
         axios.post(API.baseUrl + API.authentication, data)
             .then( (response) => {
-                console.log(response);
+  
+                // store session key in a cookie and mark session as authenticated
+                cookies.set('sessionKey', response.data.key, { maxAge: 60*60*24*14, sameSite: true });
                 this.props.setAuthentication(true);
             })
             .catch( (error) => {
