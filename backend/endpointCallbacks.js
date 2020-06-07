@@ -116,6 +116,8 @@ const userCallbacks = {
                 repeat_mismatch     password does not match the repeated password
         */
 
+
+        // check for valid email before any db queries
         if ( !emailValidator.validate(userInformation.email) ) {
             res.status(400).send("bad_email");
             return;
@@ -123,9 +125,23 @@ const userCallbacks = {
 
         userCollection.get({ email: userInformation.email }, true).then( (response) => {
             if (response === null) {
+        
+                // email is OK, check for password
+                if ( userInformation.password.length < 8) {
+                    res.status(400).send("bad_password");
+                    return;
+                }
+        
+                // make sure password and repeated password match
+                if (userInformation.password !== userInformation.repeatPassword) {
+                    res.status(400).send("repeat_mismatch");
+                    return;
+                }
+
+                // all checks OK -> insert user to db
                 userCollection.insert( userInformation ).then( (response) => {
                     console.log(response);
-                    res.status(200).send("User account created.");
+                    res.status(200).send("user_created");
                 });
             } else {
                 res.status(400).send("email_in_use");
