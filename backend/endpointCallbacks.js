@@ -63,7 +63,7 @@ const moduleCallbacks = {
 }
 
 /*
- *  USER CALL BACKS
+ *  USER API CALL BACKS
  *  /users/
  *  GET <sessionKey> [fields]
  *  POST <email> <password>
@@ -84,14 +84,13 @@ const userCallbacks = {
         // object with email and password fields
         const userInformation = req.body;
 
+        // check if user exists before proceeding
         userCollection.get({ email: userInformation.email }, true).then( (response) => {
 
             if (response === null) {
+                // user (email) not found
                 res.status(400).send("bad_credentials");
             } else {
-
-                console.log(response);
-
                 const salt = response.salt;
                 const iterations = response.passwordIterations;
                 const passwordAttempt = userInformation.password;
@@ -103,7 +102,6 @@ const userCallbacks = {
                     res.status(400).send("bad_credentials");
                     return;
                 }
-
 
                 // create session key to authenticate user login session
                 const key = crypto.randomBytes(24).toString('hex');
@@ -123,8 +121,6 @@ const userCallbacks = {
     put: (req, res) => {
         const userInformation = req.body;
 
-        console.log(userInformation);
-
         /*
             Error codes to send to the client:
                 email_in_use        email already exists on another account
@@ -140,6 +136,7 @@ const userCallbacks = {
             return;
         }
 
+        // check that email is not in use (== no db results)
         userCollection.get({ email: userInformation.email }, true).then( (response) => {
             if (response === null) {
         
@@ -159,6 +156,7 @@ const userCallbacks = {
                 const iterations = 1000;
                 const hash = crypto.pbkdf2Sync(userInformation.password, salt, iterations, 64, 'sha512').toString('hex');
 
+                // user information to be inserted in DB
                 const user = {
                     email: userInformation.email,
                     passwordHash: hash,
@@ -168,7 +166,6 @@ const userCallbacks = {
 
                 // all checks OK -> insert user to db
                 userCollection.insert( user ).then( (response) => {
-                    //console.log(response);
                     res.status(200).send("user_created");
                 });
             } else {
