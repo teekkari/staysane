@@ -1,5 +1,3 @@
-console.log(window.location.hostname);
-
 const API = {
     baseUrl: "http://" + window.location.hostname + ":5000",
 
