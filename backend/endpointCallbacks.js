@@ -2,6 +2,8 @@ const crypto = require('crypto');
 const ObjectID = require('mongodb').ObjectID;
 const db = require('./db/dbHandler.js');
 
+const emailValidator = require('email-validator');
+
 // file is loaded after mongo is connected so this works
 let moduleCollection = new db.dbCollection("modules");
 let userCollection = new db.dbCollection("users");
@@ -106,7 +108,6 @@ const userCallbacks = {
 
         console.log(userInformation);
 
-
         /*
             Error codes to send to the client:
                 email_in_use        email already exists on another account
@@ -114,6 +115,11 @@ const userCallbacks = {
                 bad_password        password does not match the criteria
                 repeat_mismatch     password does not match the repeated password
         */
+
+        if ( !emailValidator.validate(userInformation.email) ) {
+            res.status(400).send("bad_email");
+            return;
+        }
 
         userCollection.get({ email: userInformation.email }, true).then( (response) => {
             if (response === null) {
