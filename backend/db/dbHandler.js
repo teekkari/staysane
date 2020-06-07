@@ -38,9 +38,9 @@ class dbCollection {
 
         if (single) {
             return this.collection.findOne(find);
+        } else {
+            return this.collection.find(find).toArray();
         }
-
-        return this.collection.find(find).toArray();
     }
 
 
