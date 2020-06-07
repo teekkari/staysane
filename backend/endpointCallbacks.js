@@ -60,6 +60,13 @@ const moduleCallbacks = {
     }
 }
 
+/*
+ *  USER CALL BACKS
+ *  /users/
+ *  GET <sessionKey> [fields]
+ *  POST <email> <password>
+ *  PUT <email> <password>
+ */
 
 const userCallbacks = {
 
@@ -99,6 +106,15 @@ const userCallbacks = {
 
         console.log(userInformation);
 
+
+        /*
+            Error codes to send to the client:
+                email_in_use        email already exists on another account
+                bad_email           email address is not actually an email address
+                bad_password        password does not match the criteria
+                repeat_mismatch     password does not match the repeated password
+        */
+
         userCollection.get({ email: userInformation.email }, true).then( (response) => {
             if (response === null) {
                 userCollection.insert( userInformation ).then( (response) => {
@@ -106,11 +122,14 @@ const userCallbacks = {
                     res.status(200).send("User account created.");
                 });
             } else {
-                res.status(400).send("Email already exists");
+                res.status(400).send("email_in_use");
             }
         });
     },
 }
+
+
+
 
 
 module.exports = {
