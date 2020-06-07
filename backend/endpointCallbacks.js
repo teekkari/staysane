@@ -81,7 +81,7 @@ const userCallbacks = {
             } else {
                 // create session key to authenticate user login session
                 const key = crypto.randomBytes(24).toString('hex');
-                const userID = response._id
+                const userID = response._id;
 
                 // add the sessionKey to user data in db with upsert option true
                 userCollection.update({ _id: userID }, { sessionKey: key }, true).then( (response) => {
@@ -93,6 +93,7 @@ const userCallbacks = {
     },
 
     // signup
+    // TODO: field validation
     put: (req, res) => {
         const userInformation = req.body;
 
