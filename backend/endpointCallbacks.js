@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const ObjectID = require('mongodb').ObjectID;
 const db = require('./db/dbHandler.js');
+const auth = require('./authentication.js');
 
 const emailValidator = require('email-validator');
 
@@ -14,15 +15,44 @@ let userCollection = new db.dbCollection("users");
 const moduleCallbacks = {
     get: (req, res) => {
 
+        // get the sessionKey to authorize user later. return false in case of no auth key
+        if (!req.header.authorization) return false;
+        const sessionKey = req.header.authorization.split(' ')[1];
+        if (!sessionKey) return false;
+
         if (req.params.id) {
-            moduleCollection.get({ _id: new ObjectID(req.params.id) }).then( (data) => {
-                res.send(data);
+            auth.authorizeUser(sessionKey, req.params.id).then( (response) => {
+
+                moduleCollection.get({ _id: new ObjectID(req.params.id) }, true).then( (data) => {
+
+                    if (data === null) {
+                        res.status(404).send("modules_not_found");
+                        return;
+                    }
+
+                    // user is authorized and data was found => send
+                    res.send(data);
+                });
+
+            }).catch( (error) => {
+                res.status(403).send("auth_failed");
             })
         } else {
             const find = req.query;
 
             moduleCollection.get( find ).then( (data) => {
-                res.send(data);
+
+                auth.authrorizeUser(sessionKey, data).then( (response) => {
+
+                    if (data.length < 1) {
+                        res.status(404).send("modules_not_found");
+                    }
+
+                    // user is authorized and data was found => send
+                    res.send(data);
+                }).catch( (error) => {
+                    res.status(403).send("auth_failed");
+                })
             });
         }
     },
@@ -31,7 +61,39 @@ const moduleCallbacks = {
     post: (req, res) => {
         const data = req.body;
 
-        moduleCollection.insert(data);
+        // check if data is an empty object
+        if (Object.keys(data).length === 0 && data.constructor === Object) {
+            res.status(400).send("bad_data");
+            return;
+        }
+
+        // get the sessionKey to authorize user later. return false in case of no auth key
+        if (!req.header.authorization) return false;
+        const sessionKey = req.header.authorization.split(' ')[1];
+        if (!sessionKey) return false;
+
+        userCollection.get({ sessionKey: sessionKey }, single).then( (response) => {
+            moduleCollection.insert(data).then( (err, records) => {
+                if (records.length < 1) {
+                    res.status(500).send("No records were added");
+                    return;
+                }
+
+                // append new record IDs to user's resources array
+                const newResources = [...response.resources, records.map( x => x._id )];
+
+                userCollection.update({
+                    _id: response.id,
+                }, {
+                    resources: newResources
+                }).then( (response) => {
+
+                    res.status(200).send("modules_created");
+
+                })
+            });         
+        });
+
     },
 
     put: (req, res) => {
