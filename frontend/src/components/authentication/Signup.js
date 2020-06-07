@@ -31,6 +31,12 @@ class Signup extends React.Component {
         }
     }
 
+    formChangeHandler = (event) => {
+        this.setState({
+            [event.target.attributes.id.value]: event.target.value   
+        });
+    }
+
     register = (event) => {
         event.preventDefault();
 
@@ -42,32 +48,38 @@ class Signup extends React.Component {
 
         axios.put(API.baseUrl + API.authentication, data)
             .then( (response) => {
-                this.showSignupForm(false);
+                this.props.showSignupForm(false);
             })
             .catch( (error) => {
+                // if error.response defined => server responded with a specific error
+                if (error.response) {
+                    console.log(error.response);
 
-                let errorText = "";
-                switch(error.response.data) {
-                    case 'email_in_use':
-                        errorText = "That email address is already in use!";
-                        break;
-                    case 'bad_email':
-                        errorText = "Your email address is invalid.";
-                        break;
-                    case 'bad_password':
-                        errorText = "Your password does not match the criteria.";
-                        break;
-                    case 'repeat_mismatch':
-                        errorText = "Your passwords dont match.";
-                        break;
-                    default:
-                        errorText = "Something went wrong while creating your account! Please try again."
+                    let errorText = "";
+                    switch(error.response.data) {
+                        case 'email_in_use':
+                            errorText = "That email address is already in use!";
+                            break;
+                        case 'bad_email':
+                            errorText = "Your email address is invalid.";
+                            break;
+                        case 'bad_password':
+                            errorText = "Your password does not match the criteria.";
+                            break;
+                        case 'repeat_mismatch':
+                            errorText = "Your passwords dont match.";
+                            break;
+                        default:
+                            errorText = "Something went wrong while creating your account! Please try again."
+                    }
+
+                    this.setState({
+                        showError: true,
+                        errorText: errorText
+                    });
+                } else { // no error.response, it's probably unhandled promise
+                    console.log(error);
                 }
-
-                this.setState({
-                    showError: true,
-                    errorText: errorText
-                });
             });
     }
 
@@ -78,7 +90,7 @@ class Signup extends React.Component {
                 {this.displayError()}
                 <Form>
                     <Form.Group controlId="email">
-                        <Form.Label>Username</Form.Label>
+                        <Form.Label>Email</Form.Label>
                         <Form.Control type="email" placeholder="your.email@example.com" onChange={this.formChangeHandler}/>
                         <Form.Text className="text-muted">We will not send you unsolicited email!</Form.Text>
                     </Form.Group>
@@ -96,6 +108,11 @@ class Signup extends React.Component {
                     <Button variant="primary" type="submit" block onClick={this.register}>
                         Create account
                     </Button>
+
+                    <Button variant="outline-secondary" block onClick={ () => this.props.showSignupForm(false)}>
+                        Back
+                    </Button>
+
                 </Form>
             </div>
         );
