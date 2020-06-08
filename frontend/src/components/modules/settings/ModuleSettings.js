@@ -64,7 +64,8 @@ class ModuleSettings extends React.Component {
         axios.post(API.baseUrl + API.modules, data, {
             headers: authHeader
         }).then( (response) => {
-            this.props.setModules( [...this.props.modules, <BasicModule title={data.title} body={data.body} />] );
+            const insertedID = response.data;
+            this.props.setModules( [...this.props.modules, <BasicModule key={insertedID} id={insertedID} title={data.title} body={data.body} />] );
         }).catch( error => console.log(error));
     }
 
