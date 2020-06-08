@@ -4,7 +4,7 @@ import Cookies from 'universal-cookie';
 
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
-import FormControl from 'react-bootstrap/FormControl';
+import Form from 'react-bootstrap/Form';
 
 import './ModuleSettings.css';
 
@@ -51,7 +51,9 @@ class ModuleSettings extends React.Component {
         });
     }
 
-    addNew = () => {
+    addNew = (event) => {
+        event.preventDefault();
+        const form = event.currentTarget;
 
         const data = {
             title: this.state.newModuleTitle,
@@ -66,6 +68,11 @@ class ModuleSettings extends React.Component {
         }).then( (response) => {
             const insertedID = response.data;
             this.props.setModules( [...this.props.modules, <BasicModule key={insertedID} id={insertedID} title={data.title} body={data.body} />] );
+            this.setState({
+                newModuleTitle: "",
+                newModuleBody: ""
+            });
+            form.reset();
         }).catch( error => console.log(error));
     }
 
@@ -79,22 +86,23 @@ class ModuleSettings extends React.Component {
                 <div id="settings-add-module">
 
                     <h5 className="mb-3">Add custom card</h5>
+                    <Form onSubmit={this.addNew}>
+                            <InputGroup className="mb-3">
+                                <InputGroup.Prepend>
+                                    <InputGroup.Text>Title</InputGroup.Text>
+                                </InputGroup.Prepend>
+                                <Form.Control id="newModuleTitle" aria-label="Title" required value={this.state.newModuleTitle} onChange={this.formChangeHandler} />
+                            </InputGroup>
 
-                    <InputGroup className="mb-3">
-                        <InputGroup.Prepend>
-                            <InputGroup.Text>Title</InputGroup.Text>
-                        </InputGroup.Prepend>
-                        <FormControl id="newModuleTitle" aria-label="Title" onChange={this.formChangeHandler} />
-                    </InputGroup>
+                        <InputGroup className="mb-3">
+                            <InputGroup.Prepend>
+                                <InputGroup.Text>Text</InputGroup.Text>
+                            </InputGroup.Prepend>
+                            <Form.Control id="newModuleBody" as="textarea" aria-label="Text" value={this.state.newModuleBody} onChange={this.formChangeHandler} />
+                        </InputGroup>
 
-                    <InputGroup className="mb-3">
-                        <InputGroup.Prepend>
-                            <InputGroup.Text>Text</InputGroup.Text>
-                        </InputGroup.Prepend>
-                        <FormControl id="newModuleBody" as="textarea" aria-label="Text" onChange={this.formChangeHandler} placeholder="Remember to sleep 7-8 hours a day" />
-                    </InputGroup>
-
-                    <Button block variant="primary" onClick={this.addNew}>Add New</Button>
+                        <Button block variant="primary" type="submit">Add New</Button>
+                    </Form>
                 </div>
             </div>
         );
