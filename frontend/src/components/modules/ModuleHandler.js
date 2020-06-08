@@ -1,4 +1,7 @@
 import React from 'react';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+
 
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -7,6 +10,9 @@ import ModuleSettings from './settings/ModuleSettings.js';
 import BasicModule from './BasicModule.js';
 import './BasicModule.css';
 
+import API from '../Constants.js';
+
+const cookies = new Cookies();
 
 const Colors = {
     blue: "blue",
@@ -39,14 +45,18 @@ class ModuleHandler extends React.Component {
         super(props);
 
         this.state = {
-            showNewModuleModal: true,
-            modules: [
-                DefaultModules.testmodule,
-                DefaultModules.sleep,
-                DefaultModules.exercise,
-                DefaultModules.comfortzone,
-            ]
+            showNewModuleModal: false,
+            modules: [],
+            sessionKey: cookies.get('sessionKey'),
         }
+
+        axios.get(API.baseUrl + API.modules, { headers: { 'Authorization': 'Bearer ' + this.state.sessionKey } }).then( (response) => {
+            const modules = response.data.map(x => <BasicModule title={x.title} body={x.body} />);
+            this.setState({ modules: modules });
+        }).catch( (error) => {
+            console.log(error);
+        })
+
     }
 
     setModules = (modules) => {
