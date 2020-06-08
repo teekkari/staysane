@@ -59,6 +59,7 @@ const moduleCallbacks = {
 
     // TODO: check for empty body
     post: (req, res) => {
+        
         const data = req.body;
 
         // check if data is an empty object
@@ -68,28 +69,33 @@ const moduleCallbacks = {
         }
 
         // get the sessionKey to authorize user later. return false in case of no auth key
-        if (!req.header.authorization) return false;
-        const sessionKey = req.header.authorization.split(' ')[1];
+        if (!req.headers.authorization) return false;
+        const sessionKey = req.headers.authorization.split(' ')[1];
         if (!sessionKey) return false;
 
-        userCollection.get({ sessionKey: sessionKey }, single).then( (response) => {
-            moduleCollection.insert(data).then( (err, records) => {
-                if (records.length < 1) {
-                    res.status(500).send("No records were added");
-                    return;
+
+        userCollection.get({ sessionKey: sessionKey }, true).then( (userObject) => {
+
+            moduleCollection.insert(data).then( (dbres) => {
+
+                let newResources;
+                // if user has existing resources
+                if (userObject.resources) {
+                    // append new record IDs to user's resources array
+                    newResources = [...userObject.resources, dbres.insertedId];
+                } else {
+                    // else create the resource array
+                    newResources = [dbres.insertedId];
                 }
 
-                // append new record IDs to user's resources array
-                const newResources = [...response.resources, records.map( x => x._id )];
-
+                // resources updated with upsert true
                 userCollection.update({
-                    _id: response.id,
+                    _id: userObject._id,
                 }, {
                     resources: newResources
-                }).then( (response) => {
+                }, true).then( (response) => {
 
                     res.status(200).send("modules_created");
-
                 })
             });         
         });
