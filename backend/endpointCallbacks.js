@@ -15,10 +15,10 @@ let userCollection = new db.dbCollection("users");
 const moduleCallbacks = {
     get: (req, res) => {
 
-        // get the sessionKey to authorize user later. return false in case of no auth key
-        if (!req.header.authorization) return false;
-        const sessionKey = req.header.authorization.split(' ')[1];
-        if (!sessionKey) return false;
+        // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
+        if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
+        const sessionKey = req.headers.authorization.split(' ')[1];
+        if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
 
         if (req.params.id) {
             auth.authorizeUser(sessionKey, req.params.id).then( (response) => {
@@ -38,21 +38,12 @@ const moduleCallbacks = {
                 res.status(403).send("auth_failed");
             })
         } else {
-            const find = req.query;
-
-            moduleCollection.get( find ).then( (data) => {
-
-                auth.authrorizeUser(sessionKey, data).then( (response) => {
-
-                    if (data.length < 1) {
-                        res.status(404).send("modules_not_found");
-                    }
-
-                    // user is authorized and data was found => send
+            
+            userCollection.get({ sessionKey: sessionKey }, true).then( (userObject) => {
+                moduleCollection.get( {_id: { $in: userObject.resources }} ).then( (data) => {
+                    console.log(data);
                     res.send(data);
-                }).catch( (error) => {
-                    res.status(403).send("auth_failed");
-                })
+                });
             });
         }
     },
