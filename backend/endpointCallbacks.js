@@ -115,13 +115,23 @@ const moduleCallbacks = {
     // TODO: confirm deletion
     delete: (req, res) => {
         if (req.params.id === undefined) {
-            res.status(400).send("No ID defined");
+            res.status(400).send("missing_id");
         }
 
-        const find = { _id: new ObjectID(req.params.id) };
-        moduleCollection.delete(find);
+        // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
+        if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
+        const sessionKey = req.headers.authorization.split(' ')[1];
+        if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
 
-        res.send("Deleted " + find._id);
+        console.log(req.params.id);
+
+        const find = { _id: new ObjectID(req.params.id) };
+        auth.authorizeUser(sessionKey, find).then( (isAuthorized) => {
+            moduleCollection.delete(find).then( (dbResponse) => {
+                res.send("deletion_success");
+            }).catch( (error) => { res.status(500).send("deletion_failed"); });
+        }).catch( (error) => { res.status(403).send("auth_failed"); return; });
+
     }
 }
 
