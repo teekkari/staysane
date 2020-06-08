@@ -1,4 +1,6 @@
 import React from 'react';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
 
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -7,6 +9,11 @@ import FormControl from 'react-bootstrap/FormControl';
 import './ModuleSettings.css';
 
 import EditModule from './EditModule.js';
+
+import API from '../../Constants.js';
+
+
+const cookies = new Cookies();
 
 /*
  * Manages module list
@@ -17,6 +24,11 @@ import EditModule from './EditModule.js';
 class ModuleSettings extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            newModuleTitle: "",
+            newModuleBody: "",
+        }
     }
 
 
@@ -30,6 +42,30 @@ class ModuleSettings extends React.Component {
         }
 
         return output;
+    }
+
+    formChangeHandler = (event) => {
+        //console.log(event.target.attributes.id.value);
+        this.setState({
+            [event.target.attributes.id.value]: event.target.value
+        });
+    }
+
+    addNew = () => {
+
+        const data = {
+            title: this.state.newModuleTitle,
+            body: this.state.newModuleBody
+        };
+
+        const sessionKey = cookies.get('sessionKey');
+        const authHeader = { 'Authorization': 'Bearer ' + sessionKey };
+
+        axios.post(API.baseUrl + API.modules, data, {
+            headers: authHeader
+        }).then( (response) => {
+            console.log(response);
+        }).catch( error => console.log(error));
     }
 
 
@@ -47,17 +83,17 @@ class ModuleSettings extends React.Component {
                         <InputGroup.Prepend>
                             <InputGroup.Text>Title</InputGroup.Text>
                         </InputGroup.Prepend>
-                        <FormControl aria-label="Title" />
+                        <FormControl id="newModuleTitle" aria-label="Title" onChange={this.formChangeHandler} />
                     </InputGroup>
 
                     <InputGroup className="mb-3">
                         <InputGroup.Prepend>
                             <InputGroup.Text>Text</InputGroup.Text>
                         </InputGroup.Prepend>
-                        <FormControl as="textarea" aria-label="Text" placeholder="Remember to sleep 7-8 hours a day" />
+                        <FormControl id="newModuleBody" as="textarea" aria-label="Text" onChange={this.formChangeHandler} placeholder="Remember to sleep 7-8 hours a day" />
                     </InputGroup>
 
-                    <Button block variant="primary">Add New</Button>
+                    <Button block variant="primary" onClick={this.addNew}>Add New</Button>
                 </div>
             </div>
         );
