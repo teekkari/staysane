@@ -38,7 +38,7 @@ class ModuleSettings extends React.Component {
 
         for (let module of this.props.modules) {
             output.push(
-                <EditModule module={module} />
+                <EditModule module={module} removeModule={this.props.removeModule} />
             );
         }
 

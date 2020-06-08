@@ -66,6 +66,12 @@ class ModuleHandler extends React.Component {
         });
     }
 
+    removeModule = (moduleID) => {
+        this.setState({
+            modules: this.state.modules.filter( x => x.props.id !== moduleID )
+        });
+    }
+
     addNewModule = () => {
         this.setState({
             showNewModuleModal: true
@@ -103,7 +109,7 @@ class ModuleHandler extends React.Component {
                     <Modal.Title>Manage cards</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <ModuleSettings modules={this.state.modules} setModules={this.setModules} />
+                    <ModuleSettings modules={this.state.modules} setModules={this.setModules} removeModule={this.removeModule} />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={ () => { this.setState({ showNewModuleModal: false })}}>

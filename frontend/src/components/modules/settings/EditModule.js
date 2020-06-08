@@ -38,6 +38,7 @@ class EditModule extends React.Component {
 
             axios.delete(API.baseUrl + API.modules + '/' + moduleID, { headers: authHeader }).then( (response) => {
                 console.log(response);
+                this.props.removeModule(moduleID);
             }).catch( (error) => {
                 console.log(error.response);
             });
