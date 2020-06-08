@@ -1,10 +1,15 @@
 import React from 'react';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
 
 import Button from 'react-bootstrap/Button';
 import Collapse from 'react-bootstrap/Collapse';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 
+import API from '../../Constants.js';
+
+const cookies = new Cookies();
 
 class EditModule extends React.Component {
 
@@ -26,7 +31,16 @@ class EditModule extends React.Component {
 
     delete = () => {
         if (this.state.confirmDeletion) {
-            console.log("delete");
+            const sessionKey = cookies.get('sessionKey');
+            const authHeader = { 'Authorization': 'Bearer ' + sessionKey };
+            const moduleID = this.props.module.props.id;
+            console.log(moduleID);
+
+            axios.delete(API.baseUrl + API.modules + '/' + moduleID, { headers: authHeader }).then( (response) => {
+                console.log(response);
+            }).catch( (error) => {
+                console.log(error.response);
+            });
         } else {
             this.setState({ confirmDeletion: true });
         }
