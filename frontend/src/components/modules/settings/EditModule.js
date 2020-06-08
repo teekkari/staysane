@@ -48,12 +48,13 @@ class EditModule extends React.Component {
     }
 
     cancelDelete = (event) => {
+        if (event.target.toString() === '[object HTMLButtonElement]') return;
         this.setState({ confirmDeletion: false });
     }
 
     render() {
         return(
-            <div class="settings-edit-module-wrapper">
+            <div class="settings-edit-module-wrapper" onTouchStart={this.cancelDelete} >
 
                 <div className="settings-module" onClick={this.toggleCollapse} >
                     <div className="settings-module-title">{this.props.module.props.title}</div>
