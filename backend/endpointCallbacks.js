@@ -13,6 +13,8 @@ let userCollection = new db.dbCollection("users");
 // (well, its not implemented yet but..)
 
 const moduleCallbacks = {
+
+    // GET /modules/[id]
     get: (req, res) => {
 
         // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
@@ -49,6 +51,7 @@ const moduleCallbacks = {
     },
 
     // TODO: check for empty body
+    // POST /modules
     post: (req, res) => {
         
         const data = req.body;
@@ -59,10 +62,10 @@ const moduleCallbacks = {
             return;
         }
 
-        // get the sessionKey to authorize user later. return false in case of no auth key
-        if (!req.headers.authorization) return false;
+        // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
+        if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
         const sessionKey = req.headers.authorization.split(' ')[1];
-        if (!sessionKey) return false;
+        if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
 
 
         userCollection.get({ sessionKey: sessionKey }, true).then( (userObject) => {
@@ -93,6 +96,7 @@ const moduleCallbacks = {
 
     },
 
+    // PUT /modules
     put: (req, res) => {
 
         if (req.params.id == undefined) {
@@ -111,7 +115,7 @@ const moduleCallbacks = {
     // TODO: confirm deletion
     delete: (req, res) => {
         if (req.params.id === undefined) {
-            res.send("No ID defined");
+            res.status(400).send("No ID defined");
         }
 
         const find = { _id: new ObjectID(req.params.id) };
