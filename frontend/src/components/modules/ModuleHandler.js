@@ -46,13 +46,14 @@ class ModuleHandler extends React.Component {
 
         this.state = {
             showNewModuleModal: false,
+            modulesLoading: true,
             modules: [],
             sessionKey: cookies.get('sessionKey'),
         }
 
         axios.get(API.baseUrl + API.modules, { headers: { 'Authorization': 'Bearer ' + this.state.sessionKey } }).then( (response) => {
             const modules = response.data.map(x => <BasicModule title={x.title} body={x.body} />);
-            this.setState({ modules: modules });
+            this.setState({ modulesLoading: false, modules: modules });
         }).catch( (error) => {
             console.log(error);
         })
@@ -72,6 +73,9 @@ class ModuleHandler extends React.Component {
     }
 
     renderModules = () => {
+        if (this.state.modulesLoading) {
+            return <h3>Modules are loading...</h3>
+        }
         return this.state.modules;
     }
 
@@ -102,8 +106,8 @@ class ModuleHandler extends React.Component {
                     <ModuleSettings modules={this.state.modules} setModules={this.setModules} />
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={ () => { this.setState({ showNewModuleModal: false })}}>
-                        Save changes
+                    <Button variant="secondary" onClick={ () => { this.setState({ showNewModuleModal: false })}}>
+                        Exit
                     </Button>
                 </Modal.Footer>
             </Modal>
