@@ -12,7 +12,8 @@ class EditModule extends React.Component {
         super(props);
 
         this.state = {
-            open: false
+            open: false,
+            confirmDeletion: false,
         };
 
     }
@@ -21,6 +22,18 @@ class EditModule extends React.Component {
         this.setState({
             open: !this.state.open
         });
+    }
+
+    delete = () => {
+        if (this.state.confirmDeletion) {
+            console.log("delete");
+        } else {
+            this.setState({ confirmDeletion: true });
+        }
+    }
+
+    cancelDelete = (event) => {
+        this.setState({ confirmDeletion: false });
     }
 
     render() {
@@ -51,7 +64,9 @@ class EditModule extends React.Component {
                             </InputGroup.Prepend>
                             <FormControl as="textarea" aria-label="Text" value={this.props.module.props.body} />
                         </InputGroup>
-                        <Button className="mb-3" block size="sm" variant="outline-danger">Delete</Button>
+                        <Button className="mb-3" block size="sm" variant={this.state.confirmDeletion ? 'danger' : 'outline-danger'} onClick={this.delete} onBlur={this.cancelDelete}>
+                            {this.state.confirmDeletion ? 'Confirm removal' : 'Remove'}
+                        </Button>
                     </div>
                 </Collapse>
             </div>
