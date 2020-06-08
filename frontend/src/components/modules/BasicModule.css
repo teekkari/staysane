@@ -8,6 +8,10 @@
     border-radius: 10px;
 }
 
+.fake-module:hover {
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
 .module {
     display: block;
     padding: 20px;
