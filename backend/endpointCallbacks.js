@@ -89,7 +89,7 @@ const moduleCallbacks = {
                     resources: newResources
                 }, true).then( (response) => {
 
-                    res.status(200).send("modules_created");
+                    res.status(200).send(dbres.insertedId);
                 })
             });         
         });
