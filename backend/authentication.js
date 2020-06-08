@@ -3,18 +3,19 @@ const usersCollection = new db.dbCollection('users');
 
 // @param sessionKey string hex session key
 // @param resourceIDS string or array of resourceIDs
-function authorizeUser(sessionKey, _resources) {
+// @return promise with resolves to user's document
+async function authorizeUser(sessionKey, _resources) {
 
     // this allows for single values to be passed in as parameters
     const resources = [ _resources ].flat().map(x => x._id);
 
-    usersCollection.get({
+    await usersCollection.get({
         sessionKey: sessionKey,
         resources: { $all: resources },
     }, true).then( (response) => {
 
         if (response !== null) {
-            return true;
+            return response;
         } else {
             throw new Error("Authorization failed");
         }
