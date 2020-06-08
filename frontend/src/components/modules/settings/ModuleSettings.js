@@ -9,6 +9,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import './ModuleSettings.css';
 
 import EditModule from './EditModule.js';
+import BasicModule from '../BasicModule.js';
 
 import API from '../../Constants.js';
 
@@ -45,7 +46,6 @@ class ModuleSettings extends React.Component {
     }
 
     formChangeHandler = (event) => {
-        //console.log(event.target.attributes.id.value);
         this.setState({
             [event.target.attributes.id.value]: event.target.value
         });
@@ -64,7 +64,7 @@ class ModuleSettings extends React.Component {
         axios.post(API.baseUrl + API.modules, data, {
             headers: authHeader
         }).then( (response) => {
-            console.log(response);
+            this.props.setModules( [...this.props.modules, <BasicModule title={data.title} body={data.body} />] );
         }).catch( error => console.log(error));
     }
 
