@@ -23,6 +23,14 @@ async function authorizeUser(sessionKey, _resources) {
 
 }
 
+async function verifySessionKey(sessionKey) {
+    await usersCollection.get({ sessionKey: sessionKey }, true).then( response => {
+        if (response !== null) return true;
+        else throw new Error("Invalid session key");
+    });
+}
+
 module.exports = {
-    authorizeUser: authorizeUser
+    authorizeUser: authorizeUser,
+    verifySessionKey: verifySessionKey
 }
