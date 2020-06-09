@@ -30,7 +30,10 @@ class Login extends React.Component {
         // we dont care about the actual key here, it will be checked upon further requests
         const sessionKey = cookies.get('sessionKey');
         if (sessionKey !== undefined) {
-            this.props.setAuthentication(true);
+            const authHeader = { 'Authorization': 'Bearer ' + sessionKey };
+            axios.get(API.baseUrl + API.authentication, { headers: authHeader })
+                .then( (response) => this.props.setAuthentication(true) )
+                .catch( (error) => this.props.setAuthentication(true) );
         }
     }
 
@@ -55,7 +58,7 @@ class Login extends React.Component {
         axios.post(API.baseUrl + API.authentication, data)
             .then( (response) => {
                 // store session key in a cookie and mark session as authenticated
-                cookies.set('sessionKey', response.data.key, { maxAge: 60*60*24*14, sameSite: true });
+                cookies.set('sessionKey', response.data.sessionKey, { maxAge: 60*60*24*14, sameSite: true });
                 this.props.setAuthentication(true);
             })
             .catch( (error) => {
