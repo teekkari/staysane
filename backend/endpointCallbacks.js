@@ -46,7 +46,10 @@ const moduleCallbacks = {
                     console.log(data);
                     res.send(data);
                 });
-            });
+            }).catch( (error) => {
+                console.log(error);
+                res.status(400).send("invalid_session");
+            })
         }
     },
 
@@ -55,6 +58,8 @@ const moduleCallbacks = {
     post: (req, res) => {
         
         const data = req.body;
+        data.isDone = false;
+        data.dateDone = null;
 
         // check if data is an empty object
         if (Object.keys(data).length === 0 && data.constructor === Object) {
@@ -146,8 +151,19 @@ const moduleCallbacks = {
 const userCallbacks = {
 
     // get user data
+    // for the time being this is used to verify valid session keys
     get: (req, res) => {
-        res.send("OK");
+
+        // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
+        if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
+        const sessionKey = req.headers.authorization.split(' ')[1];
+        if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
+
+        auth.verifySessionKey(sessionKey).then( (response) => {
+            res.send("valid_session");
+        }).catch( (error) => {
+            res.status(403).send("invalid_session");
+        })
     },
 
     // login
@@ -158,31 +174,31 @@ const userCallbacks = {
         const userInformation = req.body;
 
         // check if user exists before proceeding
-        userCollection.get({ email: userInformation.email }, true).then( (response) => {
+        userCollection.get({ email: userInformation.email }, true).then( (userObject) => {
 
-            if (response === null) {
+            if (userObject === null) {
                 // user (email) not found
                 res.status(400).send("bad_credentials");
             } else {
-                const salt = response.salt;
-                const iterations = response.passwordIterations;
+                const salt = userObject.password.salt;
+                const iterations = userObject.password.iterations;
                 const passwordAttempt = userInformation.password;
 
                 const hashAttempt = crypto.pbkdf2Sync(passwordAttempt, salt, iterations, 64, 'sha512').toString('hex');
 
                 // password doesn't match the hash
-                if ( hashAttempt !== response.passwordHash ) {
+                if ( hashAttempt !== userObject.password.hash ) {
                     res.status(400).send("bad_credentials");
                     return;
                 }
 
                 // create session key to authenticate user login session
-                const key = crypto.randomBytes(24).toString('hex');
-                const userID = response._id;
+                const sessionKey = crypto.randomBytes(24).toString('hex');
+                const userID = userObject._id;
 
                 // add the sessionKey to user data in db with upsert option true
-                userCollection.update({ _id: userID }, { sessionKey: key }, true).then( (response) => {
-                    res.send({ key: key });
+                userCollection.update({ _id: userID }, { sessionKey: sessionKey }, true).then( (response) => {
+                    res.send({ sessionKey: sessionKey });
                 });
                 
             }
@@ -232,9 +248,12 @@ const userCallbacks = {
                 // user information to be inserted in DB
                 const user = {
                     email: userInformation.email,
-                    passwordHash: hash,
-                    salt: salt,
-                    passwordIterations: iterations
+                    password: {
+                        hash: hash,
+                        salt: salt,
+                        iterations: iterations
+                    },
+                    resources: []
                 }
 
                 // all checks OK -> insert user to db
