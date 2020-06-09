@@ -33,7 +33,7 @@ class Login extends React.Component {
             const authHeader = { 'Authorization': 'Bearer ' + sessionKey };
             axios.get(API.baseUrl + API.authentication, { headers: authHeader })
                 .then( (response) => this.props.setAuthentication(true) )
-                .catch( (error) => this.props.setAuthentication(true) );
+                .catch( (error) => this.props.setAuthentication(false) );
         }
     }
 
