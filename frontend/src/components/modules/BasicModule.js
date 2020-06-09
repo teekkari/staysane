@@ -1,10 +1,16 @@
 import React from 'react';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
 
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 
+import API from '../Constants.js';
+
 import './BasicModule.css';
+
+const cookies = new Cookies();
 
 /*
  *  BasicModule is the most basic card to be displayed
@@ -22,25 +28,36 @@ class BasicModule extends React.Component {
             title: props.title,
             body: props.body,
             color: props.color || '#ebfaff',
-            status: 'default'
+            isDone: this.props.isDone ? true : false
         }
 
     }
 
     complete = (event) => {
+        const sessionKey = cookies.get('sessionKey');
+        const authHeader = { 'Authorization': 'Bearer ' + sessionKey };
+
+        axios.put(API.baseUrl + API.modules + '/' + this.props.id, { isDone: true }, { headers: authHeader })
+            .then( (response) => {
+                console.log(response);
+            }).catch( (error) => {
+                console.log(error);
+            })
+
+
         event.target.classList.add("animate-out");
 
         // let the animation run before updating status and DOM
         setTimeout(() => {
             this.setState({
-                status: 'complete'
+                isDone: true
             });
         }, 300);
         
     }
 
     showButton = () => {
-        if (this.state.status === 'complete') {
+        if (this.state.isDone) {
             return (
             <div className="module-complete">
                 <Alert className="animate-in" variant="success">Complete!</Alert>

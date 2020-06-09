@@ -52,7 +52,7 @@ class ModuleHandler extends React.Component {
         }
 
         axios.get(API.baseUrl + API.modules, { headers: { 'Authorization': 'Bearer ' + this.state.sessionKey } }).then( (response) => {
-            const modules = response.data.map(x => <BasicModule id={x._id} key={x._id} title={x.title} body={x.body} />);
+            const modules = response.data.map(x => <BasicModule id={x._id} key={x._id} isDone={x.isDone} title={x.title} body={x.body} />);
             this.setState({ modulesLoading: false, modules: modules });
         }).catch( (error) => {
             console.log(error);
