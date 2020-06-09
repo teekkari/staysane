@@ -42,6 +42,12 @@ const moduleCallbacks = {
         } else {
             
             userCollection.get({ sessionKey: sessionKey }, true).then( (userObject) => {
+
+                if (userObject === null){
+                    res.status(400).send("invalid_session");
+                    return;
+                }
+
                 moduleCollection.get( {_id: { $in: userObject.resources }} ).then( (data) => {
                     console.log(data);
                     res.send(data);
