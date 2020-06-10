@@ -49,7 +49,6 @@ const moduleCallbacks = {
                 }
 
                 moduleCollection.get( {_id: { $in: userObject.resources }} ).then( (data) => {
-                    console.log(data);
                     res.send(data);
                 });
             }).catch( (error) => {
@@ -115,11 +114,22 @@ const moduleCallbacks = {
             return;
         }
 
+        // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
+        if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
+        const sessionKey = req.headers.authorization.split(' ')[1];
+        if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
+
         const find = { _id: new ObjectID(req.params.id) };
         const data = req.body;
-        moduleCollection.update(find, data, false).then ( (response) => {
-            res.send("updated");
-        });
+
+        auth.authorizeUser(sessionKey, find).then( (response) => {
+            moduleCollection.update(find, data, false).then ( (response) => {
+                res.send("update_successful");
+            });
+        }).catch( (error) =>{
+            res.status(403).send("auth_failed");
+        })
+        
     },
 
 
@@ -133,8 +143,6 @@ const moduleCallbacks = {
         if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
         const sessionKey = req.headers.authorization.split(' ')[1];
         if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
-
-        console.log(req.params.id);
 
         const find = { _id: new ObjectID(req.params.id) };
         auth.authorizeUser(sessionKey, find).then( (isAuthorized) => {
