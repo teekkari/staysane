@@ -28,7 +28,8 @@ class BasicModule extends React.Component {
             title: props.title,
             body: props.body,
             color: props.color || '#ebfaff',
-            isDone: this.props.isDone ? true : false
+            isDone: this.props.isDone || false,
+            animateIn: false,
         }
 
     }
@@ -50,7 +51,8 @@ class BasicModule extends React.Component {
         // let the animation run before updating status and DOM
         setTimeout(() => {
             this.setState({
-                isDone: true
+                isDone: true,
+                animateIn: true,
             });
         }, 300);
         
@@ -60,7 +62,7 @@ class BasicModule extends React.Component {
         if (this.state.isDone) {
             return (
             <div className="module-complete">
-                <Alert className="animate-in" variant="success">Complete!</Alert>
+                <Alert className={this.state.animateIn ? "animate-in" : ""} variant="success">Complete!</Alert>
             </div>);
         } else {
             return (
