@@ -16,9 +16,11 @@ const cookies = new Cookies();
  *  BasicModule is the most basic card to be displayed
  *  Has a title, body and a complete button
  *  Props:
- *      <title> : string
- *      <body> : string
- *      [color] : string default '#ebfaff'
+ *      <id>        : string db._id
+ *      <title>     : string
+ *      <body>      : string
+ *      [color]     : string default '#ebfaff'
+ *      [isDone]    : boolean default false
  */
 class BasicModule extends React.Component {
     constructor(props) {
