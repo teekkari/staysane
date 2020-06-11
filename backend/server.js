@@ -78,8 +78,12 @@ mongodb.connect(dbUrl, (err, _db) => {
     app.route("/users/:key?")
         .get(users.get)
         .post(users.post)
-        .put(users.put)
+        .put(users.put);
 
+
+    //const timers = require('./timedActions.js');
+    //timers.initializeModuleResetLoop();
+    
 
     app.listen(port, () => console.log(`Listening on port ${port}`) );
 });
