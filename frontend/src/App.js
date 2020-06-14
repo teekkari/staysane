@@ -9,6 +9,7 @@ import Tab from 'react-bootstrap/Tab';
 import ModuleHandler from './components/modules/ModuleHandler.js';
 import Header from './components/header/Header.js';
 import Login from './components/authentication/Login.js';
+import Settings from './components/settings/Settings.js';
 
 
 /*
@@ -49,6 +50,10 @@ function App() {
 
           <Tab.Pane eventKey="stats">
             stats here
+          </Tab.Pane>
+
+          <Tab.Pane eventKey="settings">
+            <Settings />
           </Tab.Pane>
 
         </Tab.Content>

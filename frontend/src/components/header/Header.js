@@ -65,7 +65,7 @@ class Header extends React.Component {
                     <ListGroup id="header-menu-listgroup" variant="flush">
                         <ListGroup.Item data-key="modules" onClick={this.selectMenuItem} className="header-menu-item">Modules</ListGroup.Item>
                         <ListGroup.Item data-key="stats" onClick={this.selectMenuItem} className="header-menu-item">Stats</ListGroup.Item>
-                        <ListGroup.Item data-key="undefined" onClick={this.selectMenuItem} className="header-menu-item">Reserved</ListGroup.Item>
+                        <ListGroup.Item data-key="settings" onClick={this.selectMenuItem} className="header-menu-item">Settings</ListGroup.Item>
                         <ListGroup.Item data-key="undefined" onClick={this.selectMenuItem} className="header-menu-item">Reserved</ListGroup.Item>
                     </ListGroup>
                 </Row>
