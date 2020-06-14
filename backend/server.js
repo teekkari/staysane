@@ -55,9 +55,7 @@ mongodb.connect(dbUrl, (err, _db) => {
     *  
     */  
 
-
     const modules = require('./endpointCallbacks.js').modules;
-
     app.route("/modules/:id?")
         .get(modules.get)
         .post(modules.post)
@@ -74,11 +72,22 @@ mongodb.connect(dbUrl, (err, _db) => {
     */  
 
     const users = require('./endpointCallbacks.js').users;
-
     app.route("/users/:key?")
         .get(users.get)
         .post(users.post)
         .put(users.put);
+
+    /*
+    * SETTINGS
+    *
+    * GET       /settings/[settingName]     get settingValue(s) in an object { name: value }
+    * POST      /settings                   update setting values (data in object { name: value })
+    */
+
+    const settings = require('./endpointCallbacks.js').settings;
+    app.route("/settings/:settingName?")
+        .get(settings.get)
+        .post(settings.post);
 
 
     //const timers = require('./timedActions.js');

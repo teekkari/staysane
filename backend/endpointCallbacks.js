@@ -5,9 +5,10 @@ const auth = require('./authentication.js');
 
 const emailValidator = require('email-validator');
 
+// DB COLLECTIONS
 // file is loaded after mongo is connected so this works
-let moduleCollection = new db.dbCollection("modules");
-let userCollection = new db.dbCollection("users");
+const moduleCollection = new db.dbCollection("modules");
+const userCollection = new db.dbCollection("users");
 
 // Data validation is done in dbHandler not here.
 // (well, its not implemented yet but..)
@@ -267,7 +268,8 @@ const userCallbacks = {
                         salt: salt,
                         iterations: iterations
                     },
-                    resources: []
+                    resources: [],
+                    settings: {}
                 }
 
                 // all checks OK -> insert user to db
@@ -282,10 +284,71 @@ const userCallbacks = {
 }
 
 
+const settingCallbacks = {
+    get: (req, res) => {
+
+    },
+
+    post: (req, res) => {
+        /*
+            data should be an object
+            {
+                settingName: settingValue,
+                settingName2: settingValue,
+                ...
+            }
+        */
+        const data = req.body;
+
+        if (typeof data !== 'object' || data === null){
+            res.status(400).send("invalid_data");
+            return;
+        }
+
+        let settings = {};
+
+        for (let settingName in data) {
+            switch (settingName) {
+                case 'moduleResetTime':
+                    // check that the time is hh:mm format, well, just that it's x:y format
+                    if (data.moduleResetTime.split(':').length !== 2) {
+                        res.status(400).send("invalid_data");
+                        return;
+                    }
+
+                    const time = data.moduleResetTime;
+                    const offset = data.UTCOffset;
+                    
+                    // convert hours and minutes to UTC - could be done client side too but this is how it is now
+                    const hours = parseInt(time.split(':')[0]) + Math.floor(offset / 60);
+                    const minutes = parseInt(time.split(':')[1]) + (offset % 60);
+
+                    // construct UTC hh:mm by padding UTC hours and minutes with zeroes
+                    settings.moduleResetTime = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+                    break;
+            }
+        }
+
+        // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
+        if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
+        const sessionKey = req.headers.authorization.split(' ')[1];
+        if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
+
+        userCollection.update( { sessionKey: sessionKey }, { settings: settings }, true).then( (dbResponse) => {
+            res.send("settings_updated");
+        }).catch( (error) => {
+            res.status(500).send("settings_update_failed");
+        });
+
+    }
+}
+
+
 
 
 
 module.exports = {
     modules: moduleCallbacks,
-    users: userCallbacks
+    users: userCallbacks,
+    settings: settingCallbacks,
 }
