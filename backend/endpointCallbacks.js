@@ -310,8 +310,8 @@ const settingCallbacks = {
         for (let settingName in data) {
             switch (settingName) {
                 case 'moduleResetTime':
-                    // check that the time is hh:mm format, well, just that it's x:y format
-                    if (data.moduleResetTime.split(':').length !== 2) {
+                    // check that the time is hh:mm format
+                    if (data.moduleResetTime.length !== 5 && data.moduleResetTime.split(':').length !== 2) {
                         res.status(400).send("invalid_data");
                         return;
                     }
@@ -323,8 +323,8 @@ const settingCallbacks = {
                     const hours = parseInt(time.split(':')[0]) + Math.floor(offset / 60);
                     const minutes = parseInt(time.split(':')[1]) + (offset % 60);
 
-                    // construct UTC hh:mm by padding UTC hours and minutes with zeroes
-                    settings.moduleResetTime = ('0' + hours).slice(-2) + ':' + ('0' + minutes).slice(-2);
+                    // construct UTC HHmm as integer for easy db querying.
+                    settings.moduleResetTime = parseInt( ('0' + hours).slice(-2) + ('0' + minutes).slice(-2) );
                     break;
             }
         }
