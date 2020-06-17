@@ -7,6 +7,7 @@ import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
 
 import ModuleHandler from './components/modules/ModuleHandler.js';
+import Milestones from './components/modules/Milestones.js';
 import Header from './components/header/Header.js';
 import Login from './components/authentication/Login.js';
 import Settings from './components/settings/Settings.js';
@@ -45,6 +46,7 @@ function App() {
         <Tab.Content>
 
           <Tab.Pane eventKey="modules">
+            <Milestones />
             <ModuleHandler />
           </Tab.Pane>
 

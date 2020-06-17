@@ -1,0 +1,20 @@
+#last-7-days {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.milestones-day {
+    display: inline-block;
+    width: 1.0rem;
+    height: 1.0rem;
+    border-radius: 3px;
+    border: 1px solid #777;
+}
+.day-complete {
+    background-color: #8fea88;
+}
+
+.day-semicomplete {
+    background-color: #5597ff;
+}
