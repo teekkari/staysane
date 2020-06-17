@@ -1,12 +1,13 @@
 const db = require('./db/dbHandler.js');
 
-//const users = new db.dbCollection('users');
+const users = new db.dbCollection('users');
 const modules = new db.dbCollection('modules');
 
 let interval = null;
 
 function initializeModuleResetLoop() {
-    interval = setInterval(resetModules, 60*1000)
+    // run the resetModules function in 5 minute intervals (5*60*1000 ms)
+    interval = setInterval(resetModules, 5*60*1000)
 }
 
 function stopModuleResetLoop() {
@@ -15,11 +16,23 @@ function stopModuleResetLoop() {
 
 
 function resetModules() {
-    modules.get({}).then( (dbResponse) => {
-        for (let module of dbResponse) {
-            modules.update({ _id: module._id }, { isDone: false }).then( (dbResponse) => {
-                console.log("module " + module.title + " updated.");
-            });
+
+    const now = new Date();
+    const time = parseInt( now.getUTCHours() + ( '0' + now.getUTCMinutes()).slice(-2) );
+
+    // get users whose reset time matches [UTCNow, UTCNow + 5min) interval
+    users.get({ "settings.moduleResetTime": { $gte: time, $lt: time + 5 } }, false).then( (users) => {
+        for (let user of users) {
+            // get user's modules from resources array
+            modules.get({ _id: { $in: user.resources } }).then( (dbResponse) => {
+                for (let module of dbResponse) {
+                    // update user's modules to isDone: false state
+                    modules.update({ _id: module._id }, { isDone: false }).then( (dbResponse) => {
+                        // successfully updated module
+                    }).catch( (error) => console.log(error) );
+                }
+                console.log("Updated modules for " + user.email);
+            }).catch( (error) => console.log(error) );
         }
     }).catch( (error) => console.log(error) );
 }
