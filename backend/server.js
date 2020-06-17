@@ -90,8 +90,8 @@ mongodb.connect(dbUrl, (err, _db) => {
         .post(settings.post);
 
 
-    //const timers = require('./timedActions.js');
-    //timers.initializeModuleResetLoop();
+    const timers = require('./timedActions.js');
+    timers.initializeModuleResetLoop();
     
 
     app.listen(port, () => console.log(`Listening on port ${port}`) );
