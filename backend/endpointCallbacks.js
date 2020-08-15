@@ -365,12 +365,8 @@ const statsCallbacks = {
 
             statsCollection.get( { uid: userObject._id }, true).then( (dbResponse) => {
 
-                const weekAgo = new Date();
-                weekAgo.setDate(weekAgo.getDate() - 7);
-
-                const filteredData = dbResponse.data.filter((stat) => { stat.date > weekAgo });
-
-                res.send(filteredData);
+                res.send(dbResponse.data.slice(-7));
+                return;
                 
             }).catch( (error) => {
                 res.sendStatus(500);
