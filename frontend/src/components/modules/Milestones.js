@@ -26,11 +26,29 @@ class Milestones extends React.Component {
         const sessionKey = cookies.get('sessionKey');
 
         axios.get(API.baseUrl + API.stats, { headers: { 'Authorization': 'Bearer ' + sessionKey } }).then( (res) => {
-            console.log(res);
-            /*this.setState({
-                milestones: res,
-            });*/
+            console.log(res.data);
+            this.setState({
+                milestones: res.data,
+            });
         }).catch( (error) => console.log(error));
+    }
+
+
+    renderMilestoneDays = () => {
+        let output = [];
+        for(let i = 0; i < 7; i++) {
+            let classString = "milestones-day";
+            if (this.state.milestones[i] !== undefined) {
+                classString += " ";
+                if (this.state.milestones[i].completed == this.state.milestones[i].total) {
+                    classString += "day-complete";
+                } else if (this.state.milestones[i].completed > 0) {
+                    classString += "day-semicomplete";
+                }
+            }
+            output.push(<span class={classString}></span>);
+        }
+        return output;
     }
 
     render() {
@@ -39,13 +57,7 @@ class Milestones extends React.Component {
                 <Card.Body>
                     <Card.Title>Last 7 days</Card.Title>
                     <div id="last-7-days">
-                        <span class="milestones-day"></span>
-                        <span class="milestones-day"></span>
-                        <span class="milestones-day day-complete"></span>
-                        <span class="milestones-day day-semicomplete"></span>
-                        <span class="milestones-day"></span>
-                        <span class="milestones-day day-complete"></span>
-                        <span class="milestones-day"></span>
+                        {this.renderMilestoneDays()}
                     </div>
                 </Card.Body>
             </Card>
