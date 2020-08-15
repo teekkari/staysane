@@ -1,14 +1,36 @@
 import React from 'react';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+
+import API from '../Constants.js';
+
 
 import Card from 'react-bootstrap/Card';
 
 import './Milestones.css';
 
-// TODO: get stats from DB
+const cookies = new Cookies();
 
 class Milestones extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            milestones: [],
+        };
+
+    }
+
+    componentDidMount() {
+
+        const sessionKey = cookies.get('sessionKey');
+
+        axios.get(API.baseUrl + API.stats, { headers: { 'Authorization': 'Bearer ' + sessionKey } }).then( (res) => {
+            console.log(res);
+            /*this.setState({
+                milestones: res,
+            });*/
+        }).catch( (error) => console.log(error));
     }
 
     render() {

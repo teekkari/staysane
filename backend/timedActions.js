@@ -1,4 +1,5 @@
 const db = require('./db/dbHandler.js');
+const stats = require('./statistics/statistics.js');
 
 const users = new db.dbCollection('users');
 const modules = new db.dbCollection('modules');
@@ -25,6 +26,10 @@ function resetModules() {
         for (let user of users) {
             // get user's modules from resources array
             modules.get({ _id: { $in: user.resources } }).then( (dbResponse) => {
+
+                // TODO: save snapshot of user's completed modules for the day.
+                stats.saveDailySnapshot(user._id, dbResponse);
+
                 for (let module of dbResponse) {
                     // update user's modules to isDone: false state
                     modules.update({ _id: module._id }, { isDone: false }).then( (dbResponse) => {

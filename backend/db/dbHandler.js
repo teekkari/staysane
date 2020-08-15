@@ -79,6 +79,11 @@ class dbCollection {
     }
 
 
+    pushOne = (find, data) => {
+        return this.collection.updateOne(find, { $push: data });
+    }
+
+
     /*
      *  find : JSON
      *

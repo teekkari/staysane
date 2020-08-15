@@ -90,6 +90,19 @@ mongodb.connect(dbUrl, (err, _db) => {
         .post(settings.post);
 
 
+    /*
+    * STATS
+    * 
+    * GET       /stats/[amount]             gets stats for user
+    * 
+    *
+    */
+
+    const stats = require('./endpointCallbacks.js').stats;
+    app.route("/stats/:amount?")
+        .get(stats.get);
+
+
     const timers = require('./timedActions.js');
     timers.initializeModuleResetLoop();
     

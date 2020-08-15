@@ -9,6 +9,7 @@ const emailValidator = require('email-validator');
 // file is loaded after mongo is connected so this works
 const moduleCollection = new db.dbCollection("modules");
 const userCollection = new db.dbCollection("users");
+const statsCollection = new db.dbCollection("statistics");
 
 // Data validation is done in dbHandler not here.
 // (well, its not implemented yet but..)
@@ -343,6 +344,45 @@ const settingCallbacks = {
     }
 }
 
+const statsCallbacks = {
+
+    get: (req, res) => {
+
+        const amount = req.params.amount;
+
+        // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
+        if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
+        const sessionKey = req.headers.authorization.split(' ')[1];
+        if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
+        
+
+        userCollection.get({ sessionKey: sessionKey }, true).then( (userObject) => {
+            
+            if (userObject === null){
+                res.status(400).send("invalid_session");
+                return;
+            }
+
+            statsCollection.get( { uid: userObject._id }, true).then( (dbResponse) => {
+
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+
+                const filteredData = dbResponse.data.filter((stat) => { stat.date > weekAgo });
+
+                res.send(filteredData);
+                
+            }).catch( (error) => {
+                res.sendStatus(500);
+            });
+        }).catch( (error) => {
+            res.sendStatus(500);
+        });
+
+
+    }
+}
+
 
 
 
@@ -351,4 +391,5 @@ module.exports = {
     modules: moduleCallbacks,
     users: userCallbacks,
     settings: settingCallbacks,
+    stats: statsCallbacks,
 }
