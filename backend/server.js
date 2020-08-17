@@ -13,7 +13,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded());
 
-const port = 5000;
+const port = 5050;
 
 const dbUrl = 'mongodb://localhost:27017';
 
