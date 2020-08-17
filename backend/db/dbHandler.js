@@ -1,3 +1,5 @@
+'use strict';
+
 const mongodb = require('mongodb').MongoClient;
 const assert = require('assert').strict;
 
@@ -9,11 +11,11 @@ const password = "";
 
 let db = null;
 
-getDB = () => {
+const getDB = () => {
     return db;
 }
 
-setDB = (_db) => {
+const setDB = (_db) => {
     db = _db;
 }
 
@@ -34,7 +36,7 @@ class dbCollection {
      *
      *  returns found rows
      */
-    get = (find, single) => {
+    get(find, single) {
 
         if (single) {
             return this.collection.findOne(find);
@@ -49,7 +51,7 @@ class dbCollection {
      *
      *  returns num of inserted rows
      */
-    insert = (data) => {
+    insert(data) {
 
         if (Array.isArray(data)) {
             
@@ -73,13 +75,13 @@ class dbCollection {
      *  TODO: check if document is found
      * 
      */
-    update = (find, data, createIfNotExists) => {
+    update(find, data, createIfNotExists) {
 
         return this.collection.updateOne( find, { $set: data }, { upsert: createIfNotExists });
     }
 
 
-    pushOne = (find, data) => {
+    pushOne(find, data) {
         return this.collection.updateOne(find, { $push: data });
     }
 
@@ -89,7 +91,7 @@ class dbCollection {
      *
      *  returns num of deleted rows
      */
-    delete = (find) => {
+    delete(find) {
 
         return this.collection.deleteOne( find );
 
