@@ -9,11 +9,11 @@ async function authorizeUser(sessionKey, _resources) {
     // this allows for single values to be passed in as parameters
     const resources = [ _resources ].flat().map(x => x._id);
 
-    await usersCollection.get({
+    return await usersCollection.get({
         sessionKey: sessionKey,
         resources: { $all: resources },
     }, true).then( (response) => {
-
+        
         if (response !== null) {
             return response;
         } else {

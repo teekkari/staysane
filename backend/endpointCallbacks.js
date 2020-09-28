@@ -147,10 +147,18 @@ const moduleCallbacks = {
         if (!sessionKey) { res.status(403).send("invalid_session_key"); return false; }
 
         const find = { _id: new ObjectID(req.params.id) };
-        auth.authorizeUser(sessionKey, find).then( (isAuthorized) => {
+        auth.authorizeUser(sessionKey, find).then( (userObject) => {
+            
+            // poistetaan itse moduuli
             moduleCollection.delete(find).then( (dbResponse) => {
-                res.send("deletion_success");
-            }).catch( (error) => { res.status(500).send("deletion_failed"); });
+
+                // poistetaan user resursseista module id
+                userCollection.pull({ _id: userObject._id }, { resources: find._id}).then( () => {
+                    res.send("deletion_success");
+                }).catch( (error) => { console.log(error); res.status(501).send("deletion_failed"); });
+
+            }).catch( (error) => { console.log(error); res.status(500).send("deletion_failed"); });
+
         }).catch( (error) => { res.status(403).send("auth_failed"); return; });
 
     }
