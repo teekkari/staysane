@@ -40,7 +40,7 @@ const dbUrl = 'mongodb://localhost:27017';
 */
 
 
-mongodb.connect(dbUrl, (err, _db) => {
+mongodb.connect(dbUrl, { useUnifiedTopology: true }, (err, _db) => {
     assert.equal(err, null);
 
     dbHandler.setDB(_db.db('staysane'));
