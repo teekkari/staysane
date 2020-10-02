@@ -11,6 +11,7 @@ import Milestones from './components/modules/Milestones.js';
 import Header from './components/header/Header.js';
 import Login from './components/authentication/Login.js';
 import Settings from './components/settings/Settings.js';
+import Stats from './components/statistics/Stats.js';
 
 
 /*
@@ -51,7 +52,7 @@ function App() {
           </Tab.Pane>
 
           <Tab.Pane eventKey="stats">
-            stats here
+            <Stats />
           </Tab.Pane>
 
           <Tab.Pane eventKey="settings">
