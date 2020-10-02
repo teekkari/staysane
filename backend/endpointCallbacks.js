@@ -379,7 +379,7 @@ const statsCallbacks = {
             // try-catch in case of invalid date but passes regex (ex. 1990-55-99)
             try {
                 getFromDate = new Date(amount);
-            } catch {
+            } catch (error) {
                 getFromDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
             }
         }
