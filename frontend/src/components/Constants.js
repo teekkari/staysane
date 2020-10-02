@@ -1,5 +1,5 @@
 const API = {
-    baseUrl: "http://" + window.location.hostname + ":5000",
+    baseUrl: "http://" + window.location.hostname + ":5100",
     authentication: "/users",
     modules: "/modules",
     stats: "/stats",
