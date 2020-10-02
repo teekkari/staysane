@@ -358,6 +358,40 @@ const statsCallbacks = {
 
         const amount = req.params.amount;
 
+        /* amount */
+        /*
+            number => number of days to get from today (today exclusive)
+            iso-date => from that date (inclusive)
+            string => 'week' / 'month' / 'year'
+            default is week
+        */
+
+        let getFromDate = null;
+        if (amount === undefined || amount.length <= 0) {
+            // amount not defined => 1 week it is
+            getFromDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        }
+
+        // regex match ISO strings
+        if (/^[0-9]{4}\-[0-9]{1,2}\-[0-9]{1,2}$/.test(amount)) {
+            //res.send("ISO");
+            
+            // try-catch in case of invalid date but passes regex (ex. 1990-55-99)
+            try {
+                getFromDate = new Date(amount);
+            } catch {
+                getFromDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            }
+        }
+
+        if (amount === 'week') getFromDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        if (amount === 'month') getFromDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+        if (amount === 'year') getFromDate = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
+
+        console.log(getFromDate);
+
+
+
         // get the sessionKey to authorize user later. send HTTP 403 in case of no auth key
         if (!req.headers.authorization) { res.status(403).send("no_authorization_header"); return false; }
         const sessionKey = req.headers.authorization.split(' ')[1];
@@ -373,13 +407,29 @@ const statsCallbacks = {
 
             statsCollection.get( { uid: userObject._id }, true).then( (dbResponse) => {
 
-                res.send(dbResponse.data.slice(-7));
+                //res.send(dbResponse.data.slice(-7));
+
+                const dataLength = dbResponse.data.length;
+
+                for (let index = dataLength - 1; index > 0; index--) {
+                    if ( new Date(dbResponse.data[index].date) < getFromDate ) {
+                        const sliceIndex = index + 1 - dataLength;
+                        //console.log(dbResponse.data.slice(sliceIndex));
+                        res.send(dbResponse.data.slice(sliceIndex));
+                        return;
+                    }
+                }
+
+                // we never got to 'getFromDate' => send whole array
+                res.send(dbResponse.data);
                 return;
                 
             }).catch( (error) => {
+                console.log(error);
                 res.sendStatus(500);
             });
         }).catch( (error) => {
+            console.log(error);
             res.sendStatus(500);
         });
 
