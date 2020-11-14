@@ -1,5 +1,5 @@
 import React from 'react';
-import { Line, Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import Cookies from 'universal-cookie';
 
 import axios from 'axios';
@@ -16,6 +16,7 @@ class Stats extends React.Component {
         super(props);
 
         this.state = {
+            isLoaded: false,
             data: {}
         }
     }
@@ -40,7 +41,7 @@ class Stats extends React.Component {
             while (startDate < endDate) {
 
                 const isoDate = startDate.toISOString().split('T')[0];
-                let value = res.data.find(x => x.date == isoDate);
+                let value = res.data.find(x => x.date === isoDate);
 
                 let completed = 0;
 
@@ -58,14 +59,14 @@ class Stats extends React.Component {
 
             let streak = 0;
             let index = numvalues.length - 1;
-            while (numvalues[index] != 0) {
+            while (numvalues[index] !== 0) {
                 streak += 1;
                 index += -1;
             }
 
 
             this.setState({
-
+                isLoaded: true,
                 data: {
                     streak: streak,
                     avgper: {
@@ -112,25 +113,37 @@ class Stats extends React.Component {
 
 
     render() {
-        return <div>
-            <h1>Statistics</h1>
-            <div className="stat-container">
-                <h2>Non-Zero days in a row</h2>
-                <div className="nonzero-days-num">
-                    {this.printNonZero()}
+
+        if (this.state.isLoaded) {
+
+            return <div>
+                <h1>Statistics</h1>
+                <div className="stat-container">
+                    <h2>Non-Zero days in a row</h2>
+                    <div className="nonzero-days-num">
+                        {this.printNonZero()}
+                    </div>
                 </div>
-            </div>
 
-            <div className="stat-container">
-                <h2># of tasks complete</h2>
-                <Line data={this.state.data.numof} />
-            </div>
+                <div className="stat-container">
+                    <h2># of tasks complete</h2>
+                    <Line data={this.state.data.numof} />
+                </div>
 
-            <div className="stat-container">
-                <h2>AVG % complete</h2>
-                <Line data={this.state.data.avgper} />
-            </div>
-        </div>;
+                <div className="stat-container">
+                    <h2>AVG % complete</h2>
+                    <Line data={this.state.data.avgper} />
+                </div>
+            </div>;
+        } else {
+
+            return <div>
+                <h1>Statistics</h1>
+                <div className="stat-container">
+                    Loading statistics...
+                </div>
+            </div>;
+        }
     }
 }
 

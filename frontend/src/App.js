@@ -3,7 +3,6 @@ import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
 
 import ModuleHandler from './components/modules/ModuleHandler.js';
