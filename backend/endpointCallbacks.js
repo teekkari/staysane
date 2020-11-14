@@ -413,9 +413,10 @@ const statsCallbacks = {
 
                 for (let index = dataLength - 1; index > 0; index--) {
                     if ( new Date(dbResponse.data[index].date) < getFromDate ) {
-                        const sliceIndex = index + 1 - dataLength;
-                        //console.log(dbResponse.data.slice(sliceIndex));
-                        res.send(dbResponse.data.slice(sliceIndex));
+                        //console.log(dbResponse.data[index]);
+                        //const sliceIndex = index + 1 - dataLength;
+                        
+                        res.send(dbResponse.data.slice(index + 1));
                         return;
                     }
                 }
