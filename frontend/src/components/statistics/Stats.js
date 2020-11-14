@@ -16,7 +16,7 @@ class Stats extends React.Component {
         super(props);
 
         this.state = {
-            
+            data: {}
         }
     }
 
@@ -30,7 +30,8 @@ class Stats extends React.Component {
 
 
             let labels = [];
-            let values = [];
+            let avgvalues = [];
+            let numvalues = [];
 
 
             let startDate = new Date(res.data[0].date);
@@ -41,40 +42,94 @@ class Stats extends React.Component {
                 const isoDate = startDate.toISOString().split('T')[0];
                 let value = res.data.find(x => x.date == isoDate);
 
-                if (value !== undefined) value = parseFloat(value.completed / value.total);
-                else value = 0;
+                let completed = 0;
+
+                if (value !== undefined) {
+                    completed = value.completed;
+                    value = parseInt(value.completed / value.total * 100);
+                } else value = 0;
 
                 labels.push(isoDate);
-                values.push(value);
+                avgvalues.push(value);
+                numvalues.push(completed);
 
                 startDate.setDate(startDate.getDate() + 1);
             }
 
-            console.log(labels);
-            console.log(values);
+            let streak = 0;
+            let index = numvalues.length - 1;
+            while (numvalues[index] != 0) {
+                streak += 1;
+                index += -1;
+            }
+
 
             this.setState({
-                labels: labels,
-                datasets: [
-                    {
-                        fill: false,
-                        lineTension: 0.5,
-                        backgroundColor: '#0e59b9',
-                        borderColor: '#0e59b9',
-                        borderWidth: 3,
-                        label: 'AVG completition %',
-                        data: values,
+
+                data: {
+                    streak: streak,
+                    avgper: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                fill: false,
+                                lineTension: 0.5,
+                                backgroundColor: '#0e59b9',
+                                borderColor: '#0e59b9',
+                                borderWidth: 3,
+                                label: 'AVG completition %',
+                                data: avgvalues,
+                            }
+                        ]
+                    },
+                    numof: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                fill: false,
+                                lineTension: 0.5,
+                                backgroundColor: '#0e59b9',
+                                borderColor: '#0e59b9',
+                                borderWidth: 3,
+                                label: '# of tasks complete',
+                                data: numvalues,
+                            }
+                        ]
                     }
-                ]
+                }
             });
         }).catch( (error) => console.log(error));
 
     }
 
+
+    printNonZero() {
+        let output = this.state.data.streak;
+
+        return output;
+    }
+
+
+
     render() {
         return <div>
             <h1>Statistics</h1>
-            <Bar data={this.state} />
+            <div className="stat-container">
+                <h2>Non-Zero days in a row</h2>
+                <div className="nonzero-days-num">
+                    {this.printNonZero()}
+                </div>
+            </div>
+
+            <div className="stat-container">
+                <h2># of tasks complete</h2>
+                <Line data={this.state.data.numof} />
+            </div>
+
+            <div className="stat-container">
+                <h2>AVG % complete</h2>
+                <Line data={this.state.data.avgper} />
+            </div>
         </div>;
     }
 }
