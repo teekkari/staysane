@@ -25,7 +25,7 @@ class Milestones extends React.Component {
 
         const sessionKey = cookies.get('sessionKey');
 
-        axios.get(API.baseUrl + API.stats, { headers: { 'Authorization': 'Bearer ' + sessionKey } }).then( (res) => {
+        axios.get(API.baseUrl + API.stats + '/week', { headers: { 'Authorization': 'Bearer ' + sessionKey } }).then( (res) => {
             console.log(res.data);
             this.setState({
                 milestones: res.data,
