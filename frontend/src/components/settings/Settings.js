@@ -7,6 +7,8 @@ import Button from 'react-bootstrap/Button';
 
 import API from '../Constants.js';
 
+import './Settings.css';
+
 const cookies = new Cookies();
 
 /*
@@ -22,6 +24,12 @@ class Settings extends React.Component {
         this.state = {
             moduleResetTime: "04:00"
         }
+    }
+
+    // remove auth cookie and refresh page
+    logout = () => {
+        cookies.remove('sessionKey');
+        window.location.reload();
     }
 
     formChangeHandler = (event) => {
@@ -55,8 +63,12 @@ class Settings extends React.Component {
                         <Form.Text className="text-muted">This will get rounded down to 30 minute steps.<br/>04:25 -&gt; 04:00</Form.Text>
                     </Form.Group>
                 </section>
-
                 <Button role="submit" onClick={this.saveSettings}>Save settings</Button>
+
+
+                <div className="settings-bottom">
+                    <Button role="logout" block onClick={this.logout}>Logout</Button>
+                </div>
             </div>
         );
     }
