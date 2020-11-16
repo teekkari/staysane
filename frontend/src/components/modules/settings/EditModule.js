@@ -16,10 +16,17 @@ class EditModule extends React.Component {
     constructor(props) {
         super(props);
 
+        this.saveCounter = 0;
+
         this.state = {
             open: false,
             confirmDeletion: false,
+            id: this.props.module.props.id,
+            title: this.props.module.props.title,
+            body: this.props.module.props.body,
         };
+
+        console.log(this.props);
 
     }
 
@@ -28,6 +35,61 @@ class EditModule extends React.Component {
             open: !this.state.open
         });
     }
+
+
+    handleChange = (event) => {
+
+        // 'body-text' or 'title-text'
+        const target = event.currentTarget;
+        const targetRole = target.getAttribute('role');
+
+        switch (targetRole) {
+            case 'title-text':
+                this.setState({ title: target.value });
+            case 'body-text':
+                this.setState({ body: target.value });
+                break;
+        }
+
+
+        // auto save created by stacking adding and delayed substract
+        const waitingTime = 1200; // ms
+
+        this.saveCounter += 1;
+        setTimeout( () => {
+
+            this.saveCounter += -1;
+            if (this.saveCounter == 0) {
+
+                this.updateBackend();
+            }
+
+        }, waitingTime);
+        
+    }
+
+
+    updateBackend = () => {
+        const data = {
+            title: this.state.title,
+            body: this.state.body
+        };
+
+        const sessionKey = cookies.get('sessionKey');
+        const authHeader = { 'Authorization': 'Bearer ' + sessionKey };
+
+        const id = '/' + this.state.id;
+
+        axios.put(API.baseUrl + API.modules + id, data, { headers: authHeader })
+            .then( (response) => {
+
+                console.log("updated db");
+
+            }).catch( error => console.log(error));
+
+    }
+
+
 
     delete = () => {
         if (this.state.confirmDeletion) {
@@ -47,6 +109,7 @@ class EditModule extends React.Component {
         }
     }
 
+    // TODO: fix cancel chaining
     cancelDelete = (event) => {
         if (event.target.toString() === '[object HTMLButtonElement]') return;
         this.setState({ confirmDeletion: false });
@@ -71,14 +134,14 @@ class EditModule extends React.Component {
                             <InputGroup.Prepend>
                                 <InputGroup.Text>Title</InputGroup.Text>
                             </InputGroup.Prepend>
-                            <FormControl aria-label="Title" value={this.props.module.props.title} />
+                            <FormControl aria-label="Title" role="title-text" onChange={this.handleChange} value={this.state.title} />
                         </InputGroup>
 
                         <InputGroup className="mb-3">
                             <InputGroup.Prepend>
-                                <InputGroup.Text>Text</InputGroup.Text>
+                                <InputGroup.Text>Details</InputGroup.Text>
                             </InputGroup.Prepend>
-                            <FormControl as="textarea" aria-label="Text" value={this.props.module.props.body} />
+                            <FormControl as="textarea"  role="body-text" aria-label="Desc." onChange={this.handleChange} value={this.state.body} />
                         </InputGroup>
                         <Button className="mb-3" block size="sm" variant={this.state.confirmDeletion ? 'danger' : 'outline-danger'} onClick={this.delete} onBlur={this.cancelDelete}>
                             {this.state.confirmDeletion ? 'Confirm removal' : 'Remove'}
