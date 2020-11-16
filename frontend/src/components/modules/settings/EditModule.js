@@ -16,17 +16,22 @@ class EditModule extends React.Component {
     constructor(props) {
         super(props);
 
-        this.saveCounter = 0;
+        
 
         this.state = {
             open: false,
             confirmDeletion: false,
+
             id: this.props.module.props.id,
             title: this.props.module.props.title,
             body: this.props.module.props.body,
+
+            showSaved: false,
+            opacity: 0,
         };
 
-        console.log(this.props);
+        this.saveCounter = 0;
+        this.saveElement = <div style={{ opacity: this.state.opacity }} className="editmodule-saved-indicator">saved</div>;
 
     }
 
@@ -61,6 +66,7 @@ class EditModule extends React.Component {
             this.saveCounter += -1;
             if (this.saveCounter == 0) {
 
+                this.showSavedIndicator();
                 this.updateBackend();
             }
 
@@ -87,6 +93,27 @@ class EditModule extends React.Component {
 
             }).catch( error => console.log(error));
 
+    }
+
+    showSavedIndicator = () => {
+        // settings-edit-module-wrapper
+
+        console.log(this.saveElement.props);
+
+        this.setState({ 
+            showSaved: true,
+            opacity: 100
+        });
+
+
+        setTimeout( () => {
+            this.setState({
+                showSaved: false,
+                opacity: 0,
+            })
+        }, 1500);
+
+    
     }
 
 
@@ -116,6 +143,7 @@ class EditModule extends React.Component {
     }
 
     render() {
+
         return(
             <div class="settings-edit-module-wrapper" onTouchStart={this.cancelDelete} >
 
@@ -143,9 +171,10 @@ class EditModule extends React.Component {
                             </InputGroup.Prepend>
                             <FormControl as="textarea"  role="body-text" aria-label="Desc." onChange={this.handleChange} value={this.state.body} />
                         </InputGroup>
-                        <Button className="mb-3" block size="sm" variant={this.state.confirmDeletion ? 'danger' : 'outline-danger'} onClick={this.delete} onBlur={this.cancelDelete}>
+                        <Button className="mb-3 editmodule-delete-button" block size="sm" variant={this.state.confirmDeletion ? 'danger' : 'outline-danger'} onClick={this.delete} onBlur={this.cancelDelete}>
                             {this.state.confirmDeletion ? 'Confirm removal' : 'Remove'}
                         </Button>
+                        <div style={{ opacity: this.state.opacity }} className="editmodule-saved-indicator">🖫 saved</div>
                     </div>
                 </Collapse>
             </div>
