@@ -8,6 +8,7 @@ import API from '../Constants';
 
 
 import './Stats.css';
+import Button from 'react-bootstrap/Button';
 
 const cookies = new Cookies();
 
@@ -17,7 +18,11 @@ class Stats extends React.Component {
 
         this.state = {
             isLoaded: false,
-            data: {}
+            show: 'week',
+            labels: [],
+            avgvalues: [],
+            numvalues: [],
+            streak: 0,
         }
     }
 
@@ -50,12 +55,13 @@ class Stats extends React.Component {
                     value = parseInt(value.completed / value.total * 100);
                 } else value = 0;
 
-                labels.push(isoDate);
+                labels.push(isoDate.slice(-5));
                 avgvalues.push(value);
                 numvalues.push(completed);
 
                 startDate.setDate(startDate.getDate() + 1);
             }
+
 
             let streak = 0;
             let index = numvalues.length - 1;
@@ -65,47 +71,77 @@ class Stats extends React.Component {
             }
 
 
+            // todo tämä allaolevaan liittyvä
             this.setState({
                 isLoaded: true,
-                data: {
-                    streak: streak,
-                    avgper: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                fill: false,
-                                lineTension: 0.5,
-                                backgroundColor: '#0e59b9',
-                                borderColor: '#0e59b9',
-                                borderWidth: 3,
-                                label: 'AVG completition %',
-                                data: avgvalues,
-                            }
-                        ]
-                    },
-                    numof: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                fill: false,
-                                lineTension: 0.5,
-                                backgroundColor: '#0e59b9',
-                                borderColor: '#0e59b9',
-                                borderWidth: 3,
-                                label: '# of tasks complete',
-                                data: numvalues,
-                            }
-                        ]
-                    }
-                }
+                streak: streak,
+                labels: labels,
+                avgvalues: avgvalues,
+                numvalues: numvalues
             });
+
         }).catch( (error) => console.log(error));
 
     }
 
 
+    getFormattedData = (type) => {
+
+        let data = null;
+        let title = "";
+        let labels = this.state.labels;
+
+        switch (type) {
+            case 'avg':
+                title = "AVG completition %";
+                data = this.state.avgvalues;
+                break;
+            case 'num':
+                title = "# of habits complete";
+                data = this.state.numvalues;
+                break;
+            default:
+                break;
+        }
+
+        switch (this.state.show) {
+            case 'week':
+                data = data.slice(-7);
+                labels = labels.slice(-7);
+                break;
+            case 'month':
+                data = data.slice(-31);
+                labels = labels.slice(-31);
+                break;
+            case 'year':
+                // data in year format by default
+                break;
+        }
+
+        return {
+                labels: labels,
+                datasets: [
+                    {
+                        fill: false,
+                        lineTension: 0.5,
+                        backgroundColor: '#0e59b9',
+                        borderColor: '#0e59b9',
+                        borderWidth: 3,
+                        label: title,
+                        data: data,
+                    }
+                ]
+            };
+
+    }
+
+    handleTimespanChange = (timespan) => {
+        this.setState({ show: timespan });
+    }
+
+
     printNonZero() {
-        let output = this.state.data.streak;
+        let output = this.state.streak;
 
         return output;
     }
@@ -125,14 +161,22 @@ class Stats extends React.Component {
                     </div>
                 </div>
 
+                <div className="stat-view-select-container">
+                    <span>------</span> {/* todo: make some nice hr lines */}
+                    <Button onClick={() => this.handleTimespanChange('week')}>Week</Button>
+                    <Button onClick={() => this.handleTimespanChange('month')}>Month</Button>
+                    <Button onClick={() => this.handleTimespanChange('year')}>Year</Button>
+                    <span>------</span>
+                </div>
+
                 <div className="stat-container">
                     <h2># of tasks complete</h2>
-                    <Line data={this.state.data.numof} />
+                    <Line data={this.getFormattedData('num')} />
                 </div>
 
                 <div className="stat-container">
                     <h2>AVG % complete</h2>
-                    <Line data={this.state.data.avgper} />
+                    <Line data={this.getFormattedData('avg')} />
                 </div>
             </div>;
         } else {
