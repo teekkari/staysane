@@ -1,0 +1,39 @@
+h1  {
+    margin-bottom: 20px;
+}
+
+.stat-view-select-container {
+    display: flex;
+    justify-content: center;
+}
+
+.stat-view-select-container * {
+    margin: 10px;
+}
+
+.stat-container {
+    padding: 20px;
+
+    margin-bottom: 40px;
+    margin-top: 40px;
+}
+
+.stat-container * {
+    max-width: 100%;
+}
+
+.nonzero-days-num {
+    background-color: #3333;
+    display: block;
+
+    width: 50%;
+    padding: 40px;
+    margin: auto;
+
+    text-align: center;
+    font-size: 2.0em;
+    font-weight: bold;
+
+    margin-top: 40px;
+}
+

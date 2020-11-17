@@ -29,8 +29,10 @@ class ModuleSettings extends React.Component {
         this.state = {
             newModuleTitle: "",
             newModuleBody: "",
+            modules: this.props.modules,
         }
     }
+    //todo: investigate double props.modules in editmodule.js and here
 
 
     showModuleList = () => {

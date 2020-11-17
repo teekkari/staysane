@@ -85,6 +85,10 @@ class dbCollection {
         return this.collection.updateOne(find, { $push: data });
     }
 
+    pull(find, data) {
+        return this.collection.update(find, { $pull: data } );
+    }   
+
 
     /*
      *  find : JSON

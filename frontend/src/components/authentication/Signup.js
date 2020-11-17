@@ -27,7 +27,7 @@ class Signup extends React.Component {
 
     displayError = () => {
         if (this.state.showError) {
-            return <Alert variant="danger">{this.state.errorText}</Alert>
+            return <Alert className="bounce-in" variant="danger">{this.state.errorText}</Alert>
         }
     }
 
@@ -73,6 +73,9 @@ class Signup extends React.Component {
                         default:
                             errorText = "Something went wrong while creating your account! Please try again."
                     }
+
+                    // jesari-fix to show error animation again on recurrent login attempts
+                    if (this.state.showError) this.setState({ showError: false });
 
                     this.setState({
                         showError: true,

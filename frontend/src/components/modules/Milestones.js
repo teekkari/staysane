@@ -25,7 +25,7 @@ class Milestones extends React.Component {
 
         const sessionKey = cookies.get('sessionKey');
 
-        axios.get(API.baseUrl + API.stats, { headers: { 'Authorization': 'Bearer ' + sessionKey } }).then( (res) => {
+        axios.get(API.baseUrl + API.stats + '/week', { headers: { 'Authorization': 'Bearer ' + sessionKey } }).then( (res) => {
             console.log(res.data);
             this.setState({
                 milestones: res.data,
@@ -40,13 +40,13 @@ class Milestones extends React.Component {
             let classString = "milestones-day";
             if (this.state.milestones[i] !== undefined) {
                 classString += " ";
-                if (this.state.milestones[i].completed == this.state.milestones[i].total) {
+                if (this.state.milestones[i].completed === this.state.milestones[i].total) {
                     classString += "day-complete";
                 } else if (this.state.milestones[i].completed > 0) {
                     classString += "day-semicomplete";
                 }
             }
-            output.push(<span class={classString}></span>);
+            output.push(<span key={i} className={classString}></span>);
         }
         return output;
     }

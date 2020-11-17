@@ -6,6 +6,7 @@
 
 .settings-edit-module-wrapper {
     border-bottom: 2px solid #aaaaaa55;
+    position: relative;
 }
 
 .settings-module {
@@ -38,4 +39,21 @@
 
 #settings-add-module {
     color: #555;
+}
+
+
+.editmodule-delete-button {
+    margin-left: 70%;
+    width: 30%;
+}
+
+.editmodule-saved-indicator {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    color: #61796a;
+    user-select: none;
+
+    opacity: 0;
+    transition: opacity 0.2s;
 }

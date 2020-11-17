@@ -13,7 +13,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded());
 
-const port = 5050;
+const port = 5100;
 
 const dbUrl = 'mongodb://localhost:27017';
 
@@ -40,7 +40,7 @@ const dbUrl = 'mongodb://localhost:27017';
 */
 
 
-mongodb.connect(dbUrl, (err, _db) => {
+mongodb.connect(dbUrl, { useUnifiedTopology: true }, (err, _db) => {
     assert.equal(err, null);
 
     dbHandler.setDB(_db.db('staysane'));

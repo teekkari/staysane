@@ -3,7 +3,6 @@ import React from 'react';
 import './Header.css';
 
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 class Header extends React.Component {
@@ -53,7 +52,8 @@ class Header extends React.Component {
             <div id="header">
                 <Row id="header-always-visible">
                     <div id="header-logo">
-                        <h1>StaySane</h1>
+                        {/* <h1>StaySane</h1> */}
+                        <img src={require("./logo_white.png")} />
                     </div>
                     <div id="header-menu-icon" onClick={this.toggleHeaderMenu}>
                         <svg className="bi bi-list" width="40px" height="40px" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">

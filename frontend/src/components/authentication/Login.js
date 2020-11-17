@@ -25,6 +25,8 @@ class Login extends React.Component {
             email: "",
             password: "",
             showSignup: false,
+            showError: false,
+            errorText: "",
         }
 
         // check if user is already authenticated
@@ -65,6 +67,14 @@ class Login extends React.Component {
             .catch( (error) => {
                 console.log(error);
                 loginButton.disabled = false;
+
+                // jesari-fix to show error animation again on recurrent login attempts
+                if (this.state.showError) this.setState({ showError: false });
+
+                this.setState({
+                    showError: true,
+                    errorText: "We couldn't log you in. Is your email and password correct?",
+                });
             });
     }
 
@@ -77,17 +87,23 @@ class Login extends React.Component {
         this.showSignupForm(true);
     }
 
+    displayError = () => {
+        if (this.state.showError) {
+            return <Alert className="bounce-in" variant="danger">{this.state.errorText}</Alert>
+        }
+    }
+
+
     render() {
 
         if (this.state.showSignup) {
             return <Signup showSignupForm={this.showSignupForm} />;
         }
 
-
-
         return (
             <div id="login-wrapper">
                 <h1>Login</h1>
+                {this.displayError()}
                 <Form>
                     <Form.Group controlId="email">
                         <Form.Label>Email</Form.Label>

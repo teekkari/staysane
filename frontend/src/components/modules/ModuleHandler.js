@@ -14,14 +14,9 @@ import API from '../Constants.js';
 
 const cookies = new Cookies();
 
-const Colors = {
-    blue: "blue",
-    red: "red",
-}
-
 // Predefined modules for basic health needs
 // Can be rendered by just calling DefaultModules.modulename in JSX
-const DefaultModules = {
+/*const DefaultModules = {
     sleep: <BasicModule title="sleep" body="You should sleep for 7-8 hours a day!" />,
     exercise: <BasicModule title="exercise" body="Exercise at least twice a week." />,
     food: <BasicModule title="nutrition" body="Remember to eat your greens" />,
@@ -31,7 +26,7 @@ const DefaultModules = {
                     title="this title is so long that it doesnt fit"
                     body="this body is also very long and takes up multiple lines and hopefully still works fine and i see no reason why it shouldnt work fine. its just a paragraph after all."
                 />
-}
+}*/
 
 /*
  * ModuleHandler takes care of the whole module list.
@@ -51,13 +46,15 @@ class ModuleHandler extends React.Component {
             sessionKey: cookies.get('sessionKey'),
         }
 
+    }
+
+    componentDidMount() {
         axios.get(API.baseUrl + API.modules, { headers: { 'Authorization': 'Bearer ' + this.state.sessionKey } }).then( (response) => {
             const modules = response.data.map(x => <BasicModule id={x._id} key={x._id} isDone={x.isDone} title={x.title} body={x.body} />);
             this.setState({ modulesLoading: false, modules: modules });
         }).catch( (error) => {
             console.log(error);
-        })
-
+        });
     }
 
     setModules = (modules) => {

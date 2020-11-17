@@ -1,0 +1,5 @@
+.settings-bottom {
+    position: absolute;
+    width: calc(100% - 40px); /* 20px padding in form */
+    bottom: 10px;
+}

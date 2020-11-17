@@ -3,7 +3,6 @@ import './App.css';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Nav from 'react-bootstrap/Nav';
 import Tab from 'react-bootstrap/Tab';
 
 import ModuleHandler from './components/modules/ModuleHandler.js';
@@ -11,6 +10,7 @@ import Milestones from './components/modules/Milestones.js';
 import Header from './components/header/Header.js';
 import Login from './components/authentication/Login.js';
 import Settings from './components/settings/Settings.js';
+import Stats from './components/statistics/Stats.js';
 
 
 /*
@@ -51,7 +51,7 @@ function App() {
           </Tab.Pane>
 
           <Tab.Pane eventKey="stats">
-            stats here
+            <Stats />
           </Tab.Pane>
 
           <Tab.Pane eventKey="settings">
