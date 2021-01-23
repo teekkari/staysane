@@ -18,6 +18,7 @@ class Stats extends React.Component {
 
         this.state = {
             isLoaded: false,
+            dataAvailable: false,
             show: 'week',
             labels: [],
             avgvalues: [],
@@ -34,6 +35,14 @@ class Stats extends React.Component {
         axios.get(API.baseUrl + API.stats + '/year', { headers: { 'Authorization': 'Bearer ' + sessionKey } }).then( (res) => {
             console.log(res.data);
 
+            // no stats yet for user
+            if (res.data.length < 1) {
+                this.setState({
+                    isLoaded: true,
+                    dataAvailable: false,
+                });
+                return;
+            }
 
             let labels = [];
             let avgvalues = [];
@@ -74,6 +83,7 @@ class Stats extends React.Component {
             // todo tämä allaolevaan liittyvä
             this.setState({
                 isLoaded: true,
+                dataAvailable: true,
                 streak: streak,
                 labels: labels,
                 avgvalues: avgvalues,
@@ -151,6 +161,13 @@ class Stats extends React.Component {
     render() {
 
         if (this.state.isLoaded) {
+
+            if (!this.state.dataAvailable) {
+                return <div>
+                    <h1>Satistics</h1>
+                    <p>No data available yet.</p>
+                </div>;
+            }
 
             return <div>
                 <h1>Statistics</h1>
