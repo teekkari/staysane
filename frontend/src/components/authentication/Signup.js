@@ -90,6 +90,7 @@ class Signup extends React.Component {
     render() {
         return(
             <div id="signup-wrapper">
+                <img class="habitti-logo" src={process.env.PUBLIC_URL + '/habittilogo.png'} />
                 <h1>Sign up</h1>
                 {this.displayError()}
                 <Form>

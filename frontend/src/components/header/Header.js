@@ -53,7 +53,7 @@ class Header extends React.Component {
                 <Row id="header-always-visible">
                     <div id="header-logo">
                         {/* <h1>StaySane</h1> */}
-                        <img src={require("./logo_white.png")} />
+                        <img src={process.env.PUBLIC_URL + '/habittilogo.png'} />
                     </div>
                     <div id="header-menu-icon" onClick={this.toggleHeaderMenu}>
                         <svg className="bi bi-list" width="40px" height="40px" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
