@@ -409,6 +409,11 @@ const statsCallbacks = {
 
                 //res.send(dbResponse.data.slice(-7));
 
+                if (dbResponse === null) {
+                    res.send([]);
+                    return;
+                }
+
                 const dataLength = dbResponse.data.length;
 
                 for (let index = dataLength - 1; index > 0; index--) {

@@ -102,6 +102,7 @@ class Login extends React.Component {
 
         return (
             <div id="login-wrapper">
+                <img class="habitti-logo" src={process.env.PUBLIC_URL + '/habittilogo.png'} />
                 <h1>Login</h1>
                 {this.displayError()}
                 <Form>

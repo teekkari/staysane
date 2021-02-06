@@ -18,6 +18,7 @@ class Stats extends React.Component {
 
         this.state = {
             isLoaded: false,
+            dataAvailable: false,
             show: 'week',
             labels: [],
             avgvalues: [],
@@ -34,6 +35,14 @@ class Stats extends React.Component {
         axios.get(API.baseUrl + API.stats + '/year', { headers: { 'Authorization': 'Bearer ' + sessionKey } }).then( (res) => {
             console.log(res.data);
 
+            // no stats yet for user
+            if (res.data.length < 1) {
+                this.setState({
+                    isLoaded: true,
+                    dataAvailable: false,
+                });
+                return;
+            }
 
             let labels = [];
             let avgvalues = [];
@@ -44,36 +53,43 @@ class Stats extends React.Component {
             const endDate = new Date();
 
             while (startDate < endDate) {
+                console.log(startDate);
 
                 const isoDate = startDate.toISOString().split('T')[0];
-                let value = res.data.find(x => x.date === isoDate);
+                const value = res.data.find(x => x.date === isoDate);
 
                 let completed = 0;
+                let avgvalue = 0;
 
                 if (value !== undefined) {
                     completed = value.completed;
-                    value = parseInt(value.completed / value.total * 100);
-                } else value = 0;
+                    avgvalue = parseInt(value.completed / value.total * 100);
+                }
 
                 labels.push(isoDate.slice(-5));
-                avgvalues.push(value);
+                avgvalues.push(avgvalue);
                 numvalues.push(completed);
 
                 startDate.setDate(startDate.getDate() + 1);
+                console.log(startDate);
             }
 
+            console.log(numvalues);
 
             let streak = 0;
             let index = numvalues.length - 1;
-            while (numvalues[index] !== 0) {
+            while (index >= 0 && numvalues[index] > 0) {
                 streak += 1;
                 index += -1;
             }
+
+            console.log(streak);
 
 
             // todo tämä allaolevaan liittyvä
             this.setState({
                 isLoaded: true,
+                dataAvailable: true,
                 streak: streak,
                 labels: labels,
                 avgvalues: avgvalues,
@@ -82,6 +98,8 @@ class Stats extends React.Component {
 
         }).catch( (error) => console.log(error));
 
+        console.log("comp mounted");
+        return;
     }
 
 
@@ -152,6 +170,13 @@ class Stats extends React.Component {
 
         if (this.state.isLoaded) {
 
+            if (!this.state.dataAvailable) {
+                return <div>
+                    <h1>Satistics</h1>
+                    <p>No data available yet.</p>
+                </div>;
+            }
+
             return <div>
                 <h1>Statistics</h1>
                 <div className="stat-container">
@@ -162,11 +187,9 @@ class Stats extends React.Component {
                 </div>
 
                 <div className="stat-view-select-container">
-                    <span>------</span> {/* todo: make some nice hr lines */}
                     <Button onClick={() => this.handleTimespanChange('week')}>Week</Button>
                     <Button onClick={() => this.handleTimespanChange('month')}>Month</Button>
                     <Button onClick={() => this.handleTimespanChange('year')}>Year</Button>
-                    <span>------</span>
                 </div>
 
                 <div className="stat-container">

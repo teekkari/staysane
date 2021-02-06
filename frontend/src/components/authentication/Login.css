@@ -10,6 +10,11 @@
     color: #333;
 }
 
+.habitti-logo {
+    height: 100px;
+    margin-bottom: 20px;
+}
+
 #login-wrapper > h1 {
     margin-bottom: 50px;
 }
